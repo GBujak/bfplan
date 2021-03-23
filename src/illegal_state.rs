@@ -10,6 +10,7 @@ pub enum IllegalStateSubject {
 
 #[derive(Serialize, Deserialize)]
 pub enum IllegalStateObject {
+    StudentGroup(String),
     Teacher(String),
     Day(u8),
     DayHour(SimpleDate),
@@ -17,7 +18,7 @@ pub enum IllegalStateObject {
 }
 
 #[derive(Serialize, Deserialize)]
-struct IllegalState {
+pub struct IllegalState {
     pub subject: IllegalStateSubject,
     pub object: IllegalStateObject,
 }

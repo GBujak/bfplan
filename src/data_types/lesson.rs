@@ -1,7 +1,7 @@
 use crate::data_types::*;
 use itertools::iproduct;
 
-struct LessonPossible<'a> {
+pub struct LessonPossible<'a> {
     pub student_group: &'a StudentGroup,
     pub subject: &'a Subject,
     pub possible_teachers: Vec<&'a Teacher>,
@@ -13,16 +13,13 @@ impl<'a> LessonPossible<'a> {
     pub fn new(
         student_group: &'a StudentGroup,
         subject: &'a Subject,
-        possible_teachers: Vec<&'a Teacher>,
-        possible_classrooms: Vec<&'a Classroom>,
-        possible_dates: Vec<&'a SimpleDate>,
     ) -> Self {
         Self {
             student_group,
             subject,
-            possible_teachers,
-            possible_classrooms,
-            possible_dates,
+            possible_teachers: Vec::new(),
+            possible_classrooms: Vec::new(),
+            possible_dates: Vec::new(),
         }
     }
 
