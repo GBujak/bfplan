@@ -1,0 +1,60 @@
+{
+    "student_groups": [
+        {
+            "name": "11A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "11B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "12A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        }
+    ],
+    "teachers": [
+        {
+            "name": "mgr. Jan Kowalski",
+            "can_teach": [
+                "matematyka",
+                "informatyka"
+            ]
+        }
+    ],
+    "classrooms": [
+        {
+            "name": "3.15d",
+            "capacity": 40
+        },
+        {
+            "name": "4.15d",
+            "capacity": 40
+        }
+    ],
+    "illegal_states": [],
+    "subjects": [
+        {
+            "name": "matematyka",
+            "subject_type": "Cwiczenia",
+            "count": 1
+        },
+        {
+            "name": "informatyka",
+            "subject_type": "Cwiczenia",
+            "count": 1
+        }
+    ]
+}

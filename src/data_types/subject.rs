@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum SubjectType {
     Laboratorium,
     Cwiczenia,
@@ -8,7 +8,7 @@ pub enum SubjectType {
     Projekt,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Subject {
     pub name: String,
     pub subject_type: SubjectType,

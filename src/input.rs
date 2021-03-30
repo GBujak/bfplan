@@ -3,7 +3,7 @@ use crate::illegal_state::IllegalState;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-struct PlanInput {
+pub struct PlanInput {
     pub student_groups: Vec<StudentGroup>,
     pub teachers: Vec<Teacher>,
     pub classrooms: Vec<Classroom>,
@@ -38,7 +38,12 @@ impl PlanInput {
             for subject_name in student_group.subjects.iter() {
                 let subject = self.find_subject(subject_name)?;
                 for _ in 0..subject.count {
-                    result.push(LessonPossible::new(student_group, subject));
+                    result.push(LessonPossible::new(
+                        student_group,
+                        subject,
+                        &self.teachers,
+                        &self.classrooms,
+                    ));
                 }
             }
         }
