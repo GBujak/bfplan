@@ -3,9 +3,11 @@ use std::io::Read;
 mod data_types;
 mod illegal_state;
 mod input;
+mod annealing;
 
 use input::PlanInput;
 use itertools::Itertools;
+use itertools::peek_nth;
 
 fn main() {
     let mut input = String::new();
@@ -21,9 +23,9 @@ fn main() {
 
     println!("Ilość planów: {}", possible_plans.clone().count());
 
-    possible_plans.clone().for_each(drop);
+    //possible_plans.clone().for_each(drop);
 
-    let plan = possible_plans.last().unwrap();
+    let plan = peek_nth(possible_plans).peek_nth(usize::MAX - 100).unwrap().clone();
     println!("{}", serde_json::to_string_pretty(&plan).unwrap());
 
     // for plan in possible_plans {

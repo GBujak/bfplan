@@ -23,11 +23,216 @@
                 "matematyka",
                 "informatyka"
             ]
+        },
+        {
+            "name": "12B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "13A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "13B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "14A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "14B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "15A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "15B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "16A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "16B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "17A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "11A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "11B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "12A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "12B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "13A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "13B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "14A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "14B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "15A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "15B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "16A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "16B",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "17A",
+            "size": 15,
+            "subjects": [
+                "matematyka",
+                "informatyka"
+            ]
         }
     ],
     "teachers": [
         {
             "name": "mgr. Jan Kowalski",
+            "can_teach": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "mgr. Jan Kowalski 2",
+            "can_teach": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "mgr. Jan Kowalski 3",
+            "can_teach": [
+                "matematyka",
+                "informatyka"
+            ]
+        },
+        {
+            "name": "mgr. Jan Kowalski 4",
             "can_teach": [
                 "matematyka",
                 "informatyka"
