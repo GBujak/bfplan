@@ -1,13 +1,13 @@
 use std::io::Read;
 
+mod annealing;
 mod data_types;
 mod illegal_state;
 mod input;
-mod annealing;
 
 use input::PlanInput;
-use itertools::Itertools;
 use itertools::peek_nth;
+use itertools::Itertools;
 
 fn main() {
     let mut input = String::new();
@@ -25,7 +25,10 @@ fn main() {
 
     //possible_plans.clone().for_each(drop);
 
-    let plan = peek_nth(possible_plans).peek_nth(usize::MAX - 100).unwrap().clone();
+    let plan = peek_nth(possible_plans)
+        .peek_nth(usize::MAX - 100)
+        .unwrap()
+        .clone();
     println!("{}", serde_json::to_string_pretty(&plan).unwrap());
 
     // for plan in possible_plans {
