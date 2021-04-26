@@ -1,4 +1,4 @@
-use crate::input::PlanInput;
+use crate::{data_types::Classroom, input::PlanInput};
 
 use super::mutation::*;
 use std::collections::{HashMap, HashSet};
@@ -15,37 +15,82 @@ pub struct TeacherTimeKey {
     pub time: u8,
 }
 
+#[derive(Default, Clone, Copy)]
 pub struct Lesson {
     pub time: u8,
     pub teacher: u8,
     pub classroom: u8,
+    pub group: u8,
+}
+
+#[derive(Hash, Eq, PartialEq)]
+pub struct CanTeach {
+    pub teacher_id: u8,
+    pub subject_id: u8,
+}
+
+#[derive(Hash, PartialEq, Eq)]
+pub struct CanHold {
+    pub classroom_id: u8,
+    pub subject_id: u8,
 }
 
 #[derive(Default)]
 pub struct AnnealingBuffer {
-    teacher_count: u8,
-    classroom_count: u8,
+    pub teacher_count: u8,
+    pub classroom_count: u8,
 
-    can_teach: HashSet<(u8, u8)>,
-    can_hold: HashSet<(u8, u8)>,
+    pub can_teach: HashSet<CanTeach>,
+    pub can_hold: HashSet<CanHold>,
 
-    classroom_time_map: HashMap<ClassroomTimeKey, u8>,
-    teacher_time_map: HashMap<TeacherTimeKey, u8>,
-    lessons: Vec<Lesson>,
+    pub classroom_time_map: HashMap<ClassroomTimeKey, u8>,
+    pub teacher_time_map: HashMap<TeacherTimeKey, u8>,
+    pub lessons: Vec<Lesson>,
 }
 
 impl AnnealingBuffer {
-    pub fn new() -> Self {
+    pub fn new(number_of_lessons: usize) -> Self {
         Self {
+            lessons: vec![Default::default(); number_of_lessons],
             ..Default::default()
         }
     }
 
-    pub fn is_free_teacher(&self, teacher_tk: TeacherTimeKey) -> bool {
-        !self.teacher_time_map.contains_key(&teacher_tk)
-    }
+    pub fn place_lesson(
+        &mut self,
+        lesson: u8,
+        teacher: u8,
+        classroom: u8,
+        time: u8,
+        group: u8,
+    ) -> bool {
+        assert!(
+            self.lessons.len() > lesson as usize,
+            "Lesson buffer is shorter than lesson id"
+        );
 
-    pub fn is_free_classroom(&self, classroom_tk: ClassroomTimeKey) -> bool {
-        !self.classroom_time_map.contains_key(&classroom_tk)
+        if self
+            .classroom_time_map
+            .contains_key(&ClassroomTimeKey { classroom, time })
+        {
+            return false;
+        }
+
+        if self
+            .teacher_time_map
+            .contains_key(&TeacherTimeKey { teacher, time })
+        {
+            return false;
+        }
+
+        let lesson_ref = self.lessons.get_mut(lesson as usize);
+        *lesson_ref.unwrap() = Lesson {
+            classroom,
+            teacher,
+            time,
+            group,
+        };
+
+        true
     }
 }

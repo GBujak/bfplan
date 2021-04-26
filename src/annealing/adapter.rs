@@ -5,6 +5,8 @@ use crate::{
     input::PlanInput,
 };
 
+use super::annealing_buffer::AnnealingBuffer;
+
 #[derive(Default)]
 pub struct AnnealingAdapter<'a> {
     subject_info: HashMap<&'a str, SubjectInfo<'a>>,
@@ -58,5 +60,48 @@ impl<'a> AnnealingAdapter<'a> {
         }
 
         result
+    }
+
+    pub fn create_annealing_buffer(&self) -> AnnealingBuffer {
+        let plan_input = self.plan_input.unwrap();
+
+        let lesson_count = plan_input
+            .student_groups
+            .iter()
+            .map(|x| x.subjects.len())
+            .reduce(|a, b| a + b)
+            .unwrap();
+
+        let mut buffer = AnnealingBuffer::new(lesson_count);
+
+        let max_time = plan_input.days * 6;
+
+        let mut lesson_index: u8 = 0;
+
+        for (group_index, _group) in plan_input.student_groups.iter().enumerate() {
+            'lesson: for _subject in &plan_input.subjects {
+                for time in 0..max_time {
+                    for (teacher_index, _teacher) in plan_input.teachers.iter().enumerate() {
+                        for (classroom_index, _classroom) in
+                            plan_input.classrooms.iter().enumerate()
+                        {
+                            // TODO: sprawdzaj czy lekcja może się odbyć w sali
+                            if buffer.place_lesson(
+                                lesson_index,
+                                teacher_index as u8,
+                                classroom_index as u8,
+                                time,
+                                group_index as u8,
+                            ) {
+                                continue 'lesson;
+                            }
+                        }
+                    }
+                }
+                lesson_index += 1;
+            }
+        }
+
+        buffer
     }
 }

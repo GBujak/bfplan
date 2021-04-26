@@ -9,6 +9,7 @@ pub struct PlanInput {
     pub classrooms: Vec<Classroom>,
     pub illegal_states: Vec<IllegalState>,
     pub subjects: Vec<Subject>,
+    pub days: u8,
 }
 
 impl PlanInput {
@@ -18,6 +19,7 @@ impl PlanInput {
         classrooms: Vec<Classroom>,
         illegal_states: Vec<IllegalState>,
         subjects: Vec<Subject>,
+        days: u8,
     ) -> Self {
         Self {
             student_groups,
@@ -25,6 +27,7 @@ impl PlanInput {
             classrooms,
             illegal_states,
             subjects,
+            days,
         }
     }
 
