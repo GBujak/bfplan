@@ -72,9 +72,8 @@ impl<'a> AnnealingAdapter<'a> {
             .reduce(|a, b| a + b)
             .unwrap();
 
-        let mut buffer = AnnealingBuffer::new(lesson_count);
-
-        let max_time = plan_input.days * 6;
+        let max_time = plan_input.days * 6; // od 0 = 8:00 do 5 = 18:00
+        let mut buffer = AnnealingBuffer::new(lesson_count, max_time);
 
         let mut lesson_index: u8 = 0;
 

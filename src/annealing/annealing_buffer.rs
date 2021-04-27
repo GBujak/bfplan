@@ -1,7 +1,10 @@
 use crate::{data_types::Classroom, input::PlanInput};
 
 use super::mutation::*;
-use std::collections::{HashMap, HashSet};
+use std::{
+    cmp::Reverse,
+    collections::{HashMap, HashSet},
+};
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq)]
 pub struct ClassroomTimeKey {
@@ -39,6 +42,7 @@ pub struct CanHold {
 pub struct AnnealingBuffer {
     pub teacher_count: u8,
     pub classroom_count: u8,
+    pub max_time: u8,
 
     pub can_teach: HashSet<CanTeach>,
     pub can_hold: HashSet<CanHold>,
@@ -49,8 +53,9 @@ pub struct AnnealingBuffer {
 }
 
 impl AnnealingBuffer {
-    pub fn new(number_of_lessons: usize) -> Self {
+    pub fn new(number_of_lessons: usize, max_time: u8) -> Self {
         Self {
+            max_time,
             lessons: vec![Default::default(); number_of_lessons],
             ..Default::default()
         }
@@ -92,5 +97,23 @@ impl AnnealingBuffer {
         };
 
         true
+    }
+
+    pub fn apply_mutation(&mut self, mutation: Mutation) -> ReverseMutation {
+        todo!()
+    }
+
+    pub fn apply_reverse_mutation(&mut self, reverse_mutation: ReverseMutation) {
+        todo!()
+    }
+
+    fn anneal_step(&mut self) {
+        todo!()
+    }
+
+    pub fn anneal_iterations(&mut self, iterations: usize) {
+        for _ in 0..iterations {
+            self.anneal_step();
+        }
     }
 }
