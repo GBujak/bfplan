@@ -99,11 +99,57 @@ impl AnnealingBuffer {
         true
     }
 
-    pub fn apply_mutation(&mut self, mutation: Mutation) -> ReverseMutation {
+    fn apply_mutation_impl(&mut self, mutation: Mutation) -> Option<u8> {
+        use super::mutation::MutationType::*;
+
+        let Mutation {
+            target_lesson,
+            mutation_type,
+        } = mutation;
+
+        let mut lesson = *self.lessons.get(target_lesson as usize).unwrap();
+        let mut result: Option<u8> = None;
+
+        match mutation_type {
+            ChangeTeacher(new_teacher) => {
+                if let Some(swap_with) = self.teacher_time_map.insert(
+                    TeacherTimeKey {
+                        teacher: new_teacher,
+                        time: lesson.time,
+                    },
+                    target_lesson,
+                ) {
+                    self.lessons[swap_with as usize].teacher = lesson.teacher;
+                    result = Some(swap_with);
+                };
+                lesson.teacher = new_teacher;
+            }
+            ChangeClassroom(new_classroom) => {
+                if let Some(swap_with) = self.classroom_time_map.insert(
+                    ClassroomTimeKey {
+                        classroom: new_classroom,
+                        time: lesson.time,
+                    },
+                    target_lesson,
+                ) {
+                    self.lessons[swap_with as usize].classroom = lesson.classroom;
+                    result = Some(swap_with);
+                };
+                lesson.teacher = new_classroom;
+            }
+            ChangeTime(_new) => {
+                todo!()
+            }
+        };
+
+        result
+    }
+
+    fn apply_mutation(&mut self, mutation: Mutation) -> ReverseMutation {
         todo!()
     }
 
-    pub fn apply_reverse_mutation(&mut self, reverse_mutation: ReverseMutation) {
+    fn apply_reverse_mutation(&mut self, reverse_mutation: ReverseMutation) {
         todo!()
     }
 
