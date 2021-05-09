@@ -1,4 +1,7 @@
-use crate::{data_types::Classroom, input::PlanInput};
+use crate::{
+    data_types::{Classroom, Teacher},
+    input::PlanInput,
+};
 
 use super::mutation::*;
 use std::{
@@ -36,6 +39,12 @@ pub struct CanTeach {
 pub struct CanHold {
     pub classroom_id: u8,
     pub subject_id: u8,
+}
+
+pub enum ApplyMutationResult {
+    OkNoCollisions,
+    OkCollidedWithLesson(u8),
+    AbortedTooComplex,
 }
 
 #[derive(Default)]
@@ -99,8 +108,9 @@ impl AnnealingBuffer {
         true
     }
 
-    fn apply_mutation_impl(&mut self, mutation: Mutation) -> Option<u8> {
+    fn apply_mutation_impl(&mut self, mutation: Mutation) -> ApplyMutationResult {
         use super::mutation::MutationType::*;
+        use ApplyMutationResult::*;
 
         let Mutation {
             target_lesson,
@@ -108,7 +118,7 @@ impl AnnealingBuffer {
         } = mutation;
 
         let mut lesson = *self.lessons.get(target_lesson as usize).unwrap();
-        let mut result: Option<u8> = None;
+        let mut result = OkNoCollisions;
 
         match mutation_type {
             ChangeTeacher(new_teacher) => {
@@ -120,7 +130,7 @@ impl AnnealingBuffer {
                     target_lesson,
                 ) {
                     self.lessons[swap_with as usize].teacher = lesson.teacher;
-                    result = Some(swap_with);
+                    result = OkCollidedWithLesson(swap_with);
                 };
                 lesson.teacher = new_teacher;
             }
@@ -133,12 +143,31 @@ impl AnnealingBuffer {
                     target_lesson,
                 ) {
                     self.lessons[swap_with as usize].classroom = lesson.classroom;
-                    result = Some(swap_with);
+                    result = OkCollidedWithLesson(swap_with);
                 };
-                lesson.teacher = new_classroom;
+                lesson.classroom = new_classroom;
             }
-            ChangeTime(_new) => {
-                todo!()
+            ChangeTime(new_time) => {
+                let classroom_collides = self.classroom_time_map.contains_key(&ClassroomTimeKey {
+                    classroom: lesson.classroom,
+                    time: new_time,
+                });
+                let teacher_collides = self.teacher_time_map.contains_key(&TeacherTimeKey {
+                    teacher: lesson.teacher,
+                    time: new_time,
+                });
+
+                if classroom_collides && teacher_collides {
+                    return AbortedTooComplex;
+                }
+
+                if let Some(swap_with) = self.classroom_time_map.insert(
+                    ClassroomTimeKey {
+                        classroom: lesson.classroom,
+                        time: new_time,
+                    },
+                    target_lesson,
+                ) {}
             }
         };
 
