@@ -1,13 +1,5 @@
-use crate::{
-    data_types::{Classroom, Teacher},
-    input::PlanInput,
-};
-
 use super::mutation::*;
-use std::{
-    cmp::Reverse,
-    collections::{HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq)]
 pub struct ClassroomTimeKey {
@@ -225,6 +217,7 @@ impl AnnealingBuffer {
                 };
                 self.lessons[target_lesson as usize].teacher = new_teacher;
             }
+
             ChangeClassroom(new_classroom) => {
                 if let Some(swap_with) = self.classroom_time_map.insert(
                     ClassroomTimeKey {
@@ -238,6 +231,7 @@ impl AnnealingBuffer {
                 };
                 self.lessons[target_lesson as usize].classroom = new_classroom;
             }
+
             ChangeTime(new_time) => {
                 match self.check_collision(new_time, lesson.classroom, lesson.teacher) {
                     NoCollision => self.move_lesson_in_time_no_check(target_lesson, new_time),
@@ -264,15 +258,19 @@ impl AnnealingBuffer {
                 }
             }
         };
+
         result
     }
 
     fn apply_mutation(&mut self, mutation: Mutation) -> ReverseMutation {
-        todo!()
+        let applied_to_id = mutation.target_lesson;
+        let previous_lesson_state = self.lessons[applied_to_id as usize];
+        self.apply_mutation_impl(mutation);
+        mutation.reverse_mutation(applied_to_id, previous_lesson_state)
     }
 
     fn apply_reverse_mutation(&mut self, reverse_mutation: ReverseMutation) {
-        todo!()
+        self.apply_mutation_impl(reverse_mutation.get());
     }
 
     fn anneal_step(&mut self) {

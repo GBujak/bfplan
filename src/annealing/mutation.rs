@@ -73,13 +73,17 @@ impl Mutation {
 
     // Stwórz mutację, której wykonanie przywróci stan do stanu przed wykonaniem
     // mutacji `self`
-    pub fn reverse_mutation(&self, applied_to_id: u8, applied_to: &Lesson) -> ReverseMutation {
+    pub fn reverse_mutation(
+        &self,
+        applied_to_id: u8,
+        previous_lesson_state: Lesson,
+    ) -> ReverseMutation {
         ReverseMutation::of(Self {
             target_lesson: applied_to_id,
             mutation_type: match self.mutation_type {
-                ChangeTeacher(_) => ChangeTeacher(applied_to.teacher),
-                ChangeTime(_) => ChangeTime(applied_to.time),
-                ChangeClassroom(_) => ChangeClassroom(applied_to.classroom),
+                ChangeTeacher(_) => ChangeTeacher(previous_lesson_state.teacher),
+                ChangeTime(_) => ChangeTime(previous_lesson_state.time),
+                ChangeClassroom(_) => ChangeClassroom(previous_lesson_state.classroom),
             },
         })
     }
