@@ -95,6 +95,9 @@ impl AnnealingBuffer {
             return false;
         }
 
+        self.classroom_time_map.insert(ClassroomTimeKey{classroom, time}, lesson);
+        self.teacher_time_map.insert(TeacherTimeKey{teacher, time}, lesson);
+
         let lesson_ref = self.lessons.get_mut(lesson as usize);
         *lesson_ref.unwrap() = Lesson {
             classroom,
@@ -281,5 +284,17 @@ impl AnnealingBuffer {
         for _ in 0..iterations {
             self.anneal_step();
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn placing_lesson_works() {
+        let mut annealing_buffer = AnnealingBuffer::new(3, 10);
+        assert!(annealing_buffer.place_lesson(0, 0, 0, 0, 0));
+        assert!(annealing_buffer.place_lesson(1, 0, 0, 1, 0));
+        assert_eq!(false, annealing_buffer.place_lesson(2, 0, 0, 0, 0));
     }
 }
