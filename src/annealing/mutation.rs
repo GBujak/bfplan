@@ -4,7 +4,7 @@ use super::{
 };
 use rand::random;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum MutationType {
     ChangeTeacher(u8),
     ChangeTime(u8),
@@ -13,12 +13,13 @@ pub enum MutationType {
 
 use MutationType::*;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Mutation {
     pub target_lesson: u8,
     pub mutation_type: MutationType,
 }
 
+#[derive(Clone, Copy, Debug)]
 pub struct ReverseMutation(Mutation);
 
 impl ReverseMutation {

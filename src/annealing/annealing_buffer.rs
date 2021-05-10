@@ -1,19 +1,19 @@
 use super::mutation::*;
 use std::collections::{HashMap, HashSet};
 
-#[derive(Clone, Copy, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 pub struct ClassroomTimeKey {
     pub classroom: u8,
     pub time: u8,
 }
 
-#[derive(Clone, Copy, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 pub struct TeacherTimeKey {
     pub teacher: u8,
     pub time: u8,
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Lesson {
     pub time: u8,
     pub teacher: u8,
@@ -33,6 +33,7 @@ pub struct CanHold {
     pub subject_id: u8,
 }
 
+#[derive(Debug)]
 pub enum ApplyMutationResult {
     OkNoCollisions,
     OkCollidedWithLesson(u8),
@@ -95,8 +96,10 @@ impl AnnealingBuffer {
             return false;
         }
 
-        self.classroom_time_map.insert(ClassroomTimeKey{classroom, time}, lesson);
-        self.teacher_time_map.insert(TeacherTimeKey{teacher, time}, lesson);
+        self.classroom_time_map
+            .insert(ClassroomTimeKey { classroom, time }, lesson);
+        self.teacher_time_map
+            .insert(TeacherTimeKey { teacher, time }, lesson);
 
         let lesson_ref = self.lessons.get_mut(lesson as usize);
         *lesson_ref.unwrap() = Lesson {
@@ -118,6 +121,7 @@ impl AnnealingBuffer {
         let teacher_col = self.teacher_time_map.get(&TeacherTimeKey { teacher, time });
 
         match (classroom_col, teacher_col) {
+            (Some(a), Some(b)) if a == b => Collision(*a),
             (Some(_), Some(_)) => TooComplex,
             (Some(x), None) => Collision(*x),
             (None, Some(x)) => Collision(*x),
@@ -237,7 +241,10 @@ impl AnnealingBuffer {
 
             ChangeTime(new_time) => {
                 match self.check_collision(new_time, lesson.classroom, lesson.teacher) {
-                    NoCollision => self.move_lesson_in_time_no_check(target_lesson, new_time),
+                    NoCollision => {
+                        self.move_lesson_in_time_no_check(target_lesson, new_time);
+                        result = OkNoCollisions;
+                    }
                     Collision(swap_with_index) => {
                         let swap_with = self.lessons[swap_with_index as usize];
                         let rec_collision = self.check_collision(
@@ -256,6 +263,8 @@ impl AnnealingBuffer {
                             ),
                         }
                         self.swap_lessons_in_time_no_check(target_lesson, swap_with_index);
+
+                        result = OkCollidedWithLesson(swap_with_index);
                     }
                     TooComplex => result = AbortedTooComplex,
                 }
@@ -296,5 +305,69 @@ mod tests {
         assert!(annealing_buffer.place_lesson(0, 0, 0, 0, 0));
         assert!(annealing_buffer.place_lesson(1, 0, 0, 1, 0));
         assert_eq!(false, annealing_buffer.place_lesson(2, 0, 0, 0, 0));
+    }
+
+    #[test]
+    fn mutations_work() {
+        use super::MutationType::*;
+
+        let mut annealing_buffer = AnnealingBuffer::new(3, 10);
+        assert!(annealing_buffer.place_lesson(0, 0, 0, 0, 0));
+        assert!(annealing_buffer.place_lesson(1, 0, 0, 1, 0));
+
+        let old_lessons = annealing_buffer.lessons.clone();
+        let old_classroom = annealing_buffer.classroom_time_map.clone();
+        let old_teachers = annealing_buffer.teacher_time_map.clone();
+
+        let mutation = Mutation::new(0, ChangeTime(1));
+        let rev_mut = annealing_buffer.apply_mutation(mutation);
+
+        assert_eq!(rev_mut.get().target_lesson, 0);
+        assert_eq!(rev_mut.get().mutation_type, ChangeTime(0));
+
+        assert_eq!(annealing_buffer.teacher_time_map, {
+            let mut map = HashMap::new();
+            map.insert(
+                TeacherTimeKey {
+                    teacher: 0,
+                    time: 1,
+                },
+                0,
+            );
+            map.insert(
+                TeacherTimeKey {
+                    teacher: 0,
+                    time: 0,
+                },
+                1,
+            );
+            map
+        });
+
+        assert_eq!(annealing_buffer.classroom_time_map, {
+            let mut map = HashMap::new();
+            map.insert(
+                ClassroomTimeKey {
+                    classroom: 0,
+                    time: 1,
+                },
+                0,
+            );
+            map.insert(
+                ClassroomTimeKey {
+                    classroom: 0,
+                    time: 0,
+                },
+                1,
+            );
+            map
+        });
+
+        annealing_buffer.apply_reverse_mutation(rev_mut);
+
+        // Czy działa cofanie mutacji
+        assert_eq!(old_lessons, annealing_buffer.lessons);
+        assert_eq!(old_teachers, annealing_buffer.teacher_time_map);
+        assert_eq!(old_classroom, annealing_buffer.classroom_time_map);
     }
 }
