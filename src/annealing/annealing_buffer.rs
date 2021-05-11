@@ -1,5 +1,14 @@
-use super::mutation::*;
-use std::collections::{HashMap, HashSet};
+use super::{
+    annealing_state::AnnealingState,
+    energy::{BufferStatistics, EnergyWeights},
+    illegal_buffer::IllegalBuffer,
+    mutation::*,
+};
+use std::{
+    collections::{HashMap, HashSet},
+    fmt::Pointer,
+    mem::swap,
+};
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 pub struct ClassroomTimeKey {
@@ -58,6 +67,16 @@ pub struct AnnealingBuffer {
     pub classroom_time_map: HashMap<ClassroomTimeKey, u8>,
     pub teacher_time_map: HashMap<TeacherTimeKey, u8>,
     pub lessons: Vec<Lesson>,
+}
+
+impl std::fmt::Debug for AnnealingBuffer {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("AnnealingBuffer")
+            .field("lessons", &self.lessons)
+            .field("classroom_time_map", &self.classroom_time_map)
+            .field("teacher_time_map", &self.teacher_time_map)
+            .finish()
+    }
 }
 
 impl AnnealingBuffer {
@@ -220,6 +239,16 @@ impl AnnealingBuffer {
                     target_lesson,
                 ) {
                     self.lessons[swap_with as usize].teacher = lesson.teacher;
+                    assert_eq!(
+                        Some(target_lesson),
+                        self.teacher_time_map.insert(
+                            TeacherTimeKey {
+                                teacher: lesson.teacher,
+                                time: self.lessons[swap_with as usize].time
+                            },
+                            swap_with
+                        )
+                    );
                     result = OkCollidedWithLesson(swap_with);
                 };
                 self.lessons[target_lesson as usize].teacher = new_teacher;
@@ -234,6 +263,16 @@ impl AnnealingBuffer {
                     target_lesson,
                 ) {
                     self.lessons[swap_with as usize].classroom = lesson.classroom;
+                    assert_eq!(
+                        Some(target_lesson),
+                        self.classroom_time_map.insert(
+                            ClassroomTimeKey {
+                                classroom: lesson.classroom,
+                                time: self.lessons[swap_with as usize].time
+                            },
+                            swap_with
+                        )
+                    );
                     result = OkCollidedWithLesson(swap_with);
                 };
                 self.lessons[target_lesson as usize].classroom = new_classroom;
@@ -256,10 +295,10 @@ impl AnnealingBuffer {
                             Collision(l) if l == target_lesson => {}
                             TooComplex => return AbortedTooComplex,
                             NoCollision => unreachable!(
-                                "NoCollision but swap_with_index collides with target_lesson"
+                                "NoCollision but swap_with_index ({}) collides with target_lesson ({})", swap_with_index, target_lesson
                             ),
                             Collision(other) => unreachable!(
-                                "Collision should be with target_lesson ({}) but got different lesson index: {}", target_lesson, other
+                                "Collision of {:?} should be with lesson {:?} but got different lesson: {:?}", swap_with, lesson, self.lessons[other as usize]
                             ),
                         }
                         self.swap_lessons_in_time_no_check(target_lesson, swap_with_index);
@@ -285,13 +324,21 @@ impl AnnealingBuffer {
         self.apply_mutation_impl(reverse_mutation.get());
     }
 
-    fn anneal_step(&mut self) {
-        todo!()
-    }
+    pub fn anneal_iterations(&mut self, iterations: usize, weights: &EnergyWeights) {
+        let mut annealing_state = AnnealingState::new(iterations);
+        let mut statistics = BufferStatistics::new();
+        statistics.emplace_of_buffer(self);
 
-    pub fn anneal_iterations(&mut self, iterations: usize) {
         for _ in 0..iterations {
-            self.anneal_step();
+            let last_energy = statistics.energy(weights);
+            let mutation = Mutation::legal_of_buffer(self);
+            let rev_mutation = self.apply_mutation(mutation);
+            statistics.emplace_of_buffer(self);
+            let new_energy = statistics.energy(weights);
+            if !annealing_state.should_accept_state(last_energy, new_energy) {
+                self.apply_reverse_mutation(rev_mutation);
+            }
+            annealing_state.do_step();
         }
     }
 }

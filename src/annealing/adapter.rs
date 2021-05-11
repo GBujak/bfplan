@@ -92,14 +92,17 @@ impl<'a> AnnealingAdapter<'a> {
                                 time,
                                 group_index as u8,
                             ) {
+                                lesson_index += 1;
                                 continue 'lesson;
                             }
                         }
                     }
                 }
-                lesson_index += 1;
             }
         }
+
+        buffer.max_time = max_time;
+        buffer.classroom_count = plan_input.classrooms.len() as u8;
 
         buffer
     }

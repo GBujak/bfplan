@@ -40,7 +40,7 @@ impl Mutation {
         }
     }
 
-    pub fn legal_of_buffer(buffer: &AnnealingBuffer, _illegal_states: &IllegalBuffer) -> Mutation {
+    pub fn legal_of_buffer(buffer: &AnnealingBuffer) -> Mutation {
         let mut target_lesson: u8;
         let mut mutation_type: MutationType;
 

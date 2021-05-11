@@ -5,6 +5,7 @@ mod data_types;
 mod illegal_state;
 mod input;
 
+use annealing::{adapter::AnnealingAdapter, energy::EnergyWeights};
 use input::PlanInput;
 use itertools::peek_nth;
 use itertools::Itertools;
@@ -14,24 +15,18 @@ fn main() {
     std::io::stdin().read_to_string(&mut input).unwrap();
     let plan_input = serde_json::from_str::<PlanInput>(&input).unwrap();
 
-    let possible_lessons = plan_input.possible_lessons().unwrap();
+    let annealing_adapter = AnnealingAdapter::of_plan_input(&plan_input);
+    let mut buffer = annealing_adapter.create_annealing_buffer();
 
-    let possible_plans = possible_lessons
-        .iter()
-        .map(|x| x.cartesian_product_iter())
-        .multi_cartesian_product();
+    dbg!(&buffer);
 
-    println!("Ilość planów: {}", possible_plans.clone().count());
+    buffer.anneal_iterations(
+        100_000,
+        &EnergyWeights {
+            student_gap_weight: 1.0,
+            teacher_gap_weight: 1.0,
+        },
+    );
 
-    //possible_plans.clone().for_each(drop);
-
-    let plan = peek_nth(possible_plans)
-        .peek_nth(usize::MAX - 100)
-        .unwrap()
-        .clone();
-    println!("{}", serde_json::to_string_pretty(&plan).unwrap());
-
-    // for plan in possible_plans {
-    //     println!("{}", serde_json::to_string_pretty(&plan).unwrap());
-    // }
+    dbg!(buffer);
 }

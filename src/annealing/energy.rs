@@ -13,8 +13,8 @@ struct TeacherDay {
 }
 
 pub struct EnergyWeights {
-    student_gap_weight: f32,
-    teacher_gap_weight: f32,
+    pub student_gap_weight: f32,
+    pub teacher_gap_weight: f32,
 }
 
 #[derive(Default)]
