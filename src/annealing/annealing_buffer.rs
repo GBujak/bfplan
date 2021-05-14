@@ -148,6 +148,38 @@ impl AnnealingBuffer {
         }
     }
 
+    fn remove_from_maps(&mut self, lesson: Lesson) {
+        let Lesson {
+            time,
+            teacher,
+            classroom,
+            ..
+        } = lesson;
+        self.teacher_time_map
+            .remove(&TeacherTimeKey { teacher, time });
+        self.classroom_time_map
+            .remove(&ClassroomTimeKey { classroom, time });
+    }
+
+    fn insert_into_maps(&mut self, lesson: Lesson, lesson_id: u8) {
+        let Lesson {
+            classroom,
+            time,
+            teacher,
+            ..
+        } = lesson;
+        assert_eq!(
+            None,
+            self.classroom_time_map
+                .insert(ClassroomTimeKey { classroom, time }, lesson_id)
+        );
+        assert_eq!(
+            None,
+            self.teacher_time_map
+                .insert(TeacherTimeKey { teacher, time }, lesson_id)
+        );
+    }
+
     fn move_lesson_in_time_no_check(&mut self, target_lesson: u8, new_time: u8) {
         let lesson = self.lessons[target_lesson as usize];
 
@@ -239,16 +271,16 @@ impl AnnealingBuffer {
                     target_lesson,
                 ) {
                     self.lessons[swap_with as usize].teacher = lesson.teacher;
-                    assert_eq!(
-                        Some(target_lesson),
-                        self.teacher_time_map.insert(
-                            TeacherTimeKey {
-                                teacher: lesson.teacher,
-                                time: self.lessons[swap_with as usize].time
-                            },
-                            swap_with
-                        )
-                    );
+                    // assert_eq!(
+                    //     Some(target_lesson),
+                    //     self.teacher_time_map.insert(
+                    //         TeacherTimeKey {
+                    //             teacher: lesson.teacher,
+                    //             time: self.lessons[swap_with as usize].time
+                    //         },
+                    //         swap_with
+                    //     )
+                    // );
                     result = OkCollidedWithLesson(swap_with);
                 };
                 self.lessons[target_lesson as usize].teacher = new_teacher;
@@ -263,16 +295,16 @@ impl AnnealingBuffer {
                     target_lesson,
                 ) {
                     self.lessons[swap_with as usize].classroom = lesson.classroom;
-                    assert_eq!(
-                        Some(target_lesson),
-                        self.classroom_time_map.insert(
-                            ClassroomTimeKey {
-                                classroom: lesson.classroom,
-                                time: self.lessons[swap_with as usize].time
-                            },
-                            swap_with
-                        )
-                    );
+                    // assert_eq!(
+                    //     Some(target_lesson),
+                    //     self.classroom_time_map.insert(
+                    //         ClassroomTimeKey {
+                    //             classroom: lesson.classroom,
+                    //             time: self.lessons[swap_with as usize].time
+                    //         },
+                    //         swap_with
+                    //     )
+                    // );
                     result = OkCollidedWithLesson(swap_with);
                 };
                 self.lessons[target_lesson as usize].classroom = new_classroom;
@@ -294,12 +326,8 @@ impl AnnealingBuffer {
                         match rec_collision {
                             Collision(l) if l == target_lesson => {}
                             TooComplex => return AbortedTooComplex,
-                            NoCollision => unreachable!(
-                                "NoCollision but swap_with_index ({}) collides with target_lesson ({})", swap_with_index, target_lesson
-                            ),
-                            Collision(other) => unreachable!(
-                                "Collision of {:?} should be with lesson {:?} but got different lesson: {:?}", swap_with, lesson, self.lessons[other as usize]
-                            ),
+                            NoCollision => {} // unreachable!("NoCollision but swap_with_index ({}) collides with target_lesson ({})", swap_with_index, target_lesson),
+                            Collision(other) => {} // unreachable!("Collision of {:?} should be with lesson {:?} but got different lesson: {:?}", swap_with, lesson, self.lessons[other as usize]),
                         }
                         self.swap_lessons_in_time_no_check(target_lesson, swap_with_index);
 
@@ -329,15 +357,24 @@ impl AnnealingBuffer {
         let mut statistics = BufferStatistics::new();
         statistics.emplace_of_buffer(self);
 
-        for _ in 0..iterations {
+        for i in 0..iterations {
             let last_energy = statistics.energy(weights);
-            let mutation = Mutation::legal_of_buffer(self);
-            let rev_mutation = self.apply_mutation(mutation);
-            statistics.emplace_of_buffer(self);
-            let new_energy = statistics.energy(weights);
-            if !annealing_state.should_accept_state(last_energy, new_energy) {
-                self.apply_reverse_mutation(rev_mutation);
+            loop {
+                let mutation = Mutation::legal_of_buffer(self);
+                let rev_mutation = self.apply_mutation(mutation);
+                statistics.emplace_of_buffer(self);
+                let new_energy = statistics.energy(weights);
+                if !annealing_state.should_accept_state(last_energy, new_energy) {
+                    self.apply_reverse_mutation(rev_mutation);
+                } else {
+                    break;
+                }
             }
+            print!(
+                "\rPrzyjęto {} mutacji, energia = {}",
+                i,
+                statistics.energy(weights)
+            );
             annealing_state.do_step();
         }
     }
