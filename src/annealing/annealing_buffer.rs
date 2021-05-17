@@ -42,7 +42,7 @@ pub struct CanHold {
     pub subject_id: u8,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum ApplyMutationResult {
     OkNoCollisions,
     OkCollidedWithLesson(u8),
@@ -140,8 +140,9 @@ impl AnnealingBuffer {
         let teacher_col = self.teacher_time_map.get(&TeacherTimeKey { teacher, time });
 
         match (classroom_col, teacher_col) {
-            (Some(a), Some(b)) if a == b => Collision(*a),
-            (Some(_), Some(_)) => TooComplex,
+            (Some(a), Some(b)) => {
+                if *a == *b { Collision(*a) } else { TooComplex }
+            },
             (Some(x), None) => Collision(*x),
             (None, Some(x)) => Collision(*x),
             (None, None) => NoCollision,
@@ -211,6 +212,8 @@ impl AnnealingBuffer {
     }
 
     fn swap_lessons_in_time_no_check(&mut self, first_lesson_index: u8, second_lesson_index: u8) {
+        self.assert_maps_synchronized("before swap in time");
+
         let first_lesson = self.lessons[first_lesson_index as usize];
         let second_lesson = self.lessons[second_lesson_index as usize];
 
@@ -246,6 +249,15 @@ impl AnnealingBuffer {
 
         self.lessons[first_lesson_index as usize].time = second_lesson.time;
         self.lessons[second_lesson_index as usize].time = first_lesson.time;
+
+        self.assert_maps_synchronized(&format!("After swap in time {} and {}: \nfirst: {:?}, \nsecond: {:?}, \ntimemap_first: teacher {:?}, classroom {:?}, \ntimemap_second: teacher {:?}, classroom {:?}",
+                                               first_lesson_index, second_lesson_index,
+                                               self.lessons[first_lesson_index as usize], self.lessons[second_lesson_index as usize],
+                                               self.teacher_time_map.get(&TeacherTimeKey{teacher: self.lessons[first_lesson_index as usize].teacher, time: self.lessons[first_lesson_index as usize].time}).unwrap(),
+                                               self.classroom_time_map.get(&ClassroomTimeKey{classroom: self.lessons[first_lesson_index as usize].classroom, time: self.lessons[first_lesson_index as usize].time}).unwrap(),
+                                               self.teacher_time_map.get(&TeacherTimeKey{teacher: self.lessons[second_lesson_index as usize].teacher, time: self.lessons[second_lesson_index as usize].time}).unwrap(),
+                                               self.classroom_time_map.get(&ClassroomTimeKey{classroom: self.lessons[second_lesson_index as usize].classroom, time: self.lessons[second_lesson_index as usize].time}).unwrap(),
+                                               ));
     }
 
     fn apply_mutation_impl(&mut self, mutation: Mutation) -> ApplyMutationResult {
@@ -261,6 +273,10 @@ impl AnnealingBuffer {
         let lesson = self.lessons[target_lesson as usize];
         let mut result = OkNoCollisions;
 
+        self.assert_maps_synchronized("Pre check");
+
+        let mut change_time_msg = "";
+
         match mutation_type {
             ChangeTeacher(new_teacher) => {
                 if let Some(swap_with) = self.teacher_time_map.insert(
@@ -271,16 +287,13 @@ impl AnnealingBuffer {
                     target_lesson,
                 ) {
                     self.lessons[swap_with as usize].teacher = lesson.teacher;
-                    // assert_eq!(
-                    //     Some(target_lesson),
-                    //     self.teacher_time_map.insert(
-                    //         TeacherTimeKey {
-                    //             teacher: lesson.teacher,
-                    //             time: self.lessons[swap_with as usize].time
-                    //         },
-                    //         swap_with
-                    //     )
-                    // );
+                    self.teacher_time_map.insert(
+                        TeacherTimeKey {
+                            teacher: lesson.teacher,
+                            time: self.lessons[swap_with as usize].time,
+                        },
+                        swap_with,
+                    );
                     result = OkCollidedWithLesson(swap_with);
                 };
                 self.lessons[target_lesson as usize].teacher = new_teacher;
@@ -295,16 +308,13 @@ impl AnnealingBuffer {
                     target_lesson,
                 ) {
                     self.lessons[swap_with as usize].classroom = lesson.classroom;
-                    // assert_eq!(
-                    //     Some(target_lesson),
-                    //     self.classroom_time_map.insert(
-                    //         ClassroomTimeKey {
-                    //             classroom: lesson.classroom,
-                    //             time: self.lessons[swap_with as usize].time
-                    //         },
-                    //         swap_with
-                    //     )
-                    // );
+                    self.classroom_time_map.insert(
+                        ClassroomTimeKey {
+                            classroom: lesson.classroom,
+                            time: self.lessons[swap_with as usize].time,
+                        },
+                        swap_with,
+                    );
                     result = OkCollidedWithLesson(swap_with);
                 };
                 self.lessons[target_lesson as usize].classroom = new_classroom;
@@ -313,10 +323,12 @@ impl AnnealingBuffer {
             ChangeTime(new_time) => {
                 match self.check_collision(new_time, lesson.classroom, lesson.teacher) {
                     NoCollision => {
+                        change_time_msg = "NoCollision";
                         self.move_lesson_in_time_no_check(target_lesson, new_time);
                         result = OkNoCollisions;
                     }
                     Collision(swap_with_index) => {
+                        change_time_msg = "Collision";
                         let swap_with = self.lessons[swap_with_index as usize];
                         let rec_collision = self.check_collision(
                             lesson.time,
@@ -325,19 +337,24 @@ impl AnnealingBuffer {
                         );
                         match rec_collision {
                             Collision(l) if l == target_lesson => {}
-                            TooComplex => return AbortedTooComplex,
+                            TooComplex => result = AbortedTooComplex,
                             NoCollision => {} // unreachable!("NoCollision but swap_with_index ({}) collides with target_lesson ({})", swap_with_index, target_lesson),
                             Collision(other) => {} // unreachable!("Collision of {:?} should be with lesson {:?} but got different lesson: {:?}", swap_with, lesson, self.lessons[other as usize]),
                         }
-                        self.swap_lessons_in_time_no_check(target_lesson, swap_with_index);
-
-                        result = OkCollidedWithLesson(swap_with_index);
+                        if result != AbortedTooComplex {
+                            self.swap_lessons_in_time_no_check(target_lesson, swap_with_index);
+                            result = OkCollidedWithLesson(swap_with_index);
+                        }
                     }
                     TooComplex => result = AbortedTooComplex,
                 }
             }
         };
 
+        self.assert_maps_synchronized(&format!(
+            "Post check, mutation = {:?} {}, result = {:?}",
+            &mutation, change_time_msg, result
+        ));
         result
     }
 
@@ -359,7 +376,7 @@ impl AnnealingBuffer {
 
         for i in 0..iterations {
             let last_energy = statistics.energy(weights);
-            loop {
+            for i in 1..=1_000_000 {
                 let mutation = Mutation::legal_of_buffer(self);
                 let rev_mutation = self.apply_mutation(mutation);
                 statistics.emplace_of_buffer(self);
@@ -369,6 +386,10 @@ impl AnnealingBuffer {
                 } else {
                     break;
                 }
+                if i == 1_000_000 {
+                    println!("\n1,000,000 odrzuconych mutacji, przerywam");
+                    return;
+                }
             }
             print!(
                 "\rPrzyjęto {} mutacji, energia = {}",
@@ -376,6 +397,28 @@ impl AnnealingBuffer {
                 statistics.energy(weights)
             );
             annealing_state.do_step();
+        }
+    }
+
+    pub fn assert_maps_synchronized(&self, debug_message: &str) {
+        for (lesson_id, lesson) in self.lessons.iter().enumerate() {
+            let lesson_id = lesson_id as u8;
+            let Lesson {
+                classroom,
+                teacher,
+                time,
+                ..
+            } = *lesson;
+            let teacher_check = self.teacher_time_map.get(&TeacherTimeKey { teacher, time });
+            if teacher_check != Some(&lesson_id) {
+               // panic!("Maps desynchronized: lesson_id = {} lesson = {:?}, teacher_check = {:?} \nMessage: {}", lesson_id, lesson, teacher_check, debug_message);
+            }
+            let classroom_check = self
+                .classroom_time_map
+                .get(&ClassroomTimeKey { classroom, time });
+            if classroom_check != Some(&lesson_id) {
+                //panic!("Maps desynchronized: lesson_id = {} lesson = {:?}, classroom_check = {:?} \nMessage: {}", lesson_id, lesson, classroom_check, debug_message);
+            }
         }
     }
 }

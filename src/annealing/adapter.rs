@@ -1,9 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{
-    data_types::{Classroom, StudentGroup, Subject, Teacher},
-    input::PlanInput,
-};
+use crate::{data_types::{Classroom, SimpleDate, StudentGroup, Subject, Teacher}, input::PlanInput, output::{LessonOwned, PlanOutput}};
 
 use super::annealing_buffer::AnnealingBuffer;
 
@@ -105,5 +102,20 @@ impl<'a> AnnealingAdapter<'a> {
         buffer.classroom_count = plan_input.classrooms.len() as u8;
 
         buffer
+    }
+
+    pub fn buffer_to_output(&self, annealing_buffer: &AnnealingBuffer) -> PlanOutput {
+        let mut output = PlanOutput::new();
+        for (lesson_id, lesson) in annealing_buffer.lessons.iter().enumerate() {
+            let lesson_info = &self.lesson_info[lesson_id];
+            output.push_lesson(LessonOwned {
+                subject_name: lesson_info.subject_name.to_owned(),
+                group: lesson_info.student_group.name.clone(),
+                teacher: self.plan_input.unwrap().teachers[lesson.teacher as usize].name.clone(),
+                time: SimpleDate::from_u8_time(lesson.time),
+                classroom: self.plan_input.unwrap().classrooms[lesson.classroom as usize].name.clone(),
+            })
+        }
+        output
     }
 }

@@ -5,7 +5,7 @@ pub fn probability(last_energy: f32, new_energy: f32, temperature: f32) -> f32 {
 }
 
 pub fn temperature(time: f32) -> f32 {
-    f32::max(0.0, 1.0 - time)
+    f32::max(0.2, 1.0 - time * 0.5)
 }
 
 pub fn should_accept_state(last_energy: f32, new_energy: f32, temperature: f32) -> bool {

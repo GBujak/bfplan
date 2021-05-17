@@ -17,6 +17,12 @@ impl SimpleDate {
         );
         Self { day, hour }
     }
+
+    pub fn from_u8_time(time: u8) -> Self {
+        let day = time / 6;
+        let hour = time % 6;
+        Self { day, hour }
+    }
 }
 
 #[derive(Debug, Clone)]
