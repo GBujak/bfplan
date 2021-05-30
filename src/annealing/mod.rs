@@ -5,3 +5,4 @@ pub mod annealing_state;
 pub mod energy;
 pub mod illegal_buffer;
 pub mod mutation;
+pub mod inner_state;

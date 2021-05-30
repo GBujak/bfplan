@@ -4,31 +4,14 @@ use super::{
     illegal_buffer::IllegalBuffer,
     mutation::*,
 };
+
 use std::{
     collections::{HashMap, HashSet},
     fmt::Pointer,
     mem::swap,
 };
 
-#[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
-pub struct ClassroomTimeKey {
-    pub classroom: u8,
-    pub time: u8,
-}
-
-#[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
-pub struct TeacherTimeKey {
-    pub teacher: u8,
-    pub time: u8,
-}
-
-#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Lesson {
-    pub time: u8,
-    pub teacher: u8,
-    pub classroom: u8,
-    pub group: u8,
-}
+pub use super::inner_state::{ClassroomTimeKey, Lesson, TeacherTimeKey};
 
 #[derive(Hash, Eq, PartialEq)]
 pub struct CanTeach {
@@ -141,8 +124,12 @@ impl AnnealingBuffer {
 
         match (classroom_col, teacher_col) {
             (Some(a), Some(b)) => {
-                if *a == *b { Collision(*a) } else { TooComplex }
-            },
+                if *a == *b {
+                    Collision(*a)
+                } else {
+                    TooComplex
+                }
+            }
             (Some(x), None) => Collision(*x),
             (None, Some(x)) => Collision(*x),
             (None, None) => NoCollision,
@@ -411,7 +398,7 @@ impl AnnealingBuffer {
             } = *lesson;
             let teacher_check = self.teacher_time_map.get(&TeacherTimeKey { teacher, time });
             if teacher_check != Some(&lesson_id) {
-               // panic!("Maps desynchronized: lesson_id = {} lesson = {:?}, teacher_check = {:?} \nMessage: {}", lesson_id, lesson, teacher_check, debug_message);
+                // panic!("Maps desynchronized: lesson_id = {} lesson = {:?}, teacher_check = {:?} \nMessage: {}", lesson_id, lesson, teacher_check, debug_message);
             }
             let classroom_check = self
                 .classroom_time_map
