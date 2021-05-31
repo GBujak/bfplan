@@ -2,14 +2,59 @@
 documentclass: article
 papersize: a4
 lang: pl
-toc: t
 
 fontsize: 8pt
 
-geometry: margin=2cm
+geometry: margin=3cm
+numbersections: true
+
+monofont: Iosevka Term
+
+header-includes: |
+    \usepackage{placeins}
+    \usepackage{float}
 ---
 
-# Opis algorytmu
+\begin{figure}
+    \centering
+    \Large Politechnika Świętokrzyska \\
+    Wydział Elektrotechniki, Automatyki i Informatyki\\
+    \vspace{2cm}
+
+    Grzegorz Bujak\\
+    Arkadiusz Markowski\\
+    Marcin Majdański\\
+    \vspace{2cm}
+
+    \Huge Układanie planu zajęć na studiach niestacjionarnych\\
+    \vspace{2cm}
+
+    \large Projekt zespołowy\\
+    na studiach stacjonarnych\\
+    o kierunku informatyka\\
+    \vspace{4cm}
+
+    \raggedleft Opiekun projektu:\\
+    doktor inżynier Grzegorz Słoń
+\end{figure}
+
+\vspace{1cm}
+
+\clearpage
+
+\begin{figure}[H]
+    \tableofcontents
+\end{figure}
+
+\clearpage
+
+# Charakterystyka zadania
+
+Problem, który postanowiliśmy rozwiązać to układanie planu lekcji na studiach
+niestacjonarnych. Problem można interpretować na wiele sposobów. W tym projekcie
+traktujemy ten problem jako problem optymalizacji.
+
+# Podstawa teoretyczna
 
 ## Symulowane wyżarzanie
 
@@ -33,24 +78,17 @@ akceptuje zmianę stanu, która pogarsza wynik. Dzięki temu, algorytm nie zatrz
 się w minimum lokalnym.
 
 Temperatura maleje przy każdej zmianie stanu. Przy niskiej temperaturze, algorytm
-zaczyna działać jak algorytm zachłanny. Nasza implementacja algorytmu przerywa pracę,
-gdy odrzucone zostanie 1.000.000 zmian stanu z rzędu.
+zaczyna działać jak algorytm zachłanny. 
 
-## Mutacje
+# Algorytm obliczeniowy
 
-Problemem typowej implementacji algorytmu symulowanego wyżarzania do rozwiązania
-problemu szukania planu lekcji jest rozmiar stanu. Typowa implementacja algorytmu
-wykonuje kopię całego stanu.
+Program, który napisaliśmy implementuje algorytm symulowanego wyżarzania opisany w
+poprzedniej sekcji. W tej sekcji, opisaliśmy, w jaki sposób nasz program implementuje
+ten algorytm.
 
-Stwierdziliśmy, że kopiowanie stanu planu lekcji byłoby zbyt kosztowne. Z tego
-powodu, zaimplementowaliśmy coś co nazwaliśmy "mutacjami".  Mutacja to struktura
-przechowująca rodzaj zmiany stanu i pozwalająca na wygenerowanie mutacji odwrotnej,
-której wykonanie przywróci stan przed oryginalną mutacją.
-
-Losowanie stanu sąsiedniego w naszym programie polega na losowaniu mutacji. Mutacja
-jest następnie wykonywana na stanie programu. Oceniana jest energia stanu po mutacji
-i podejmowna jest decyzja o przyjęciu nowego stanu. Przy odrzuceniu nowego stanu,
-wykonywana jest mutacja odwrotna.
+Większość czasu działania programu odbywa się w nieskończonej pętli, której działanie
+jest opisane w krokach w poprzedniej sekcji. Nasza implementacja algorytmu przerywa
+pracę, gdy odrzucone zostanie 1.000.000 zmian stanu z rzędu.
 
 ## Przechowywanie stanu programu
 
@@ -71,6 +109,29 @@ struct PlanLekcji {
     czas_grupa: HashMap<{czas: int, grupa: int}, int>,
 }
 ```
+
+Czas jest przechowywany jako liczba całkowita. Można ją traktować jak ID.
+
+* Czas o wartości "0" to pierwszy dzień zjazdu o godzinie 8:00.
+* Czas o wartości "1" to pierwszy dzień zjazdu o godzinie 10:00.
+* Czas o wartości "5" to pierwszy dzień zjazdu o godzinie 18:00.
+* Czas o wartości "6" to drugi dzień zjazdu o godzinie 8:00.
+
+## Mutacje
+
+Problemem typowej implementacji algorytmu symulowanego wyżarzania do rozwiązania
+problemu szukania planu lekcji jest rozmiar stanu. Typowa implementacja algorytmu
+wykonuje kopię całego stanu.
+
+Stwierdziliśmy, że kopiowanie stanu planu lekcji byłoby zbyt kosztowne. Z tego
+powodu, zaimplementowaliśmy coś co nazwaliśmy "mutacjami".  Mutacja to struktura
+przechowująca rodzaj zmiany stanu i pozwalająca na wygenerowanie mutacji odwrotnej,
+której wykonanie przywróci stan przed oryginalną mutacją.
+
+Losowanie stanu sąsiedniego w naszym programie polega na losowaniu mutacji. Mutacja
+jest następnie wykonywana na stanie programu. Oceniana jest energia stanu po mutacji
+i podejmowna jest decyzja o przyjęciu nowego stanu. Przy odrzuceniu nowego stanu,
+wykonywana jest mutacja odwrotna.
 
 ## Obliczanie energii
 
