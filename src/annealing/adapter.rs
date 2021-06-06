@@ -72,7 +72,7 @@ impl<'a> AnnealingAdapter<'a> {
         let max_time = plan_input.days * 6; // od 0 = 8:00 do 5 = 18:00
         let mut buffer = AnnealingBuffer::new(lesson_count, max_time);
 
-        let mut lesson_index: u8 = 0;
+        let mut lesson_index: usize = 0;
 
         for (group_index, _group) in plan_input.student_groups.iter().enumerate() {
             'lesson: for _subject in &plan_input.subjects {
@@ -106,7 +106,8 @@ impl<'a> AnnealingAdapter<'a> {
 
     pub fn buffer_to_output(&self, annealing_buffer: &AnnealingBuffer) -> PlanOutput {
         let mut output = PlanOutput::new();
-        for (lesson_id, lesson) in annealing_buffer.lessons.iter().enumerate() {
+        let state_ref = annealing_buffer.inner_state.state_ref();
+        for (lesson_id, lesson) in state_ref.lessons.iter().enumerate() {
             let lesson_info = &self.lesson_info[lesson_id];
             output.push_lesson(LessonOwned {
                 subject_name: lesson_info.subject_name.to_owned(),

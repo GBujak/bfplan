@@ -15,7 +15,7 @@ use MutationType::*;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Mutation {
-    pub target_lesson: u8,
+    pub target_lesson: usize,
     pub mutation_type: MutationType,
 }
 
@@ -33,7 +33,7 @@ impl ReverseMutation {
 }
 
 impl Mutation {
-    pub fn new(target_lesson: u8, mutation_type: MutationType) -> Self {
+    pub fn new(target_lesson: usize, mutation_type: MutationType) -> Self {
         Self {
             target_lesson,
             mutation_type,
@@ -41,11 +41,12 @@ impl Mutation {
     }
 
     pub fn legal_of_buffer(buffer: &AnnealingBuffer) -> Mutation {
-        let mut target_lesson: u8;
+        let mut target_lesson: usize;
         let mut mutation_type: MutationType;
+        let state_ref = buffer.inner_state.state_ref();
 
         loop {
-            target_lesson = random::<u8>() % buffer.lessons.len() as u8;
+            target_lesson = random::<usize>() % state_ref.lessons.len();
 
             // random::<f32>() mieści się w przedziale [0, 1)
             // 50% szansy na zmianę terminu
@@ -76,7 +77,7 @@ impl Mutation {
     // mutacji `self`
     pub fn reverse_mutation(
         &self,
-        applied_to_id: u8,
+        applied_to_id: usize,
         previous_lesson_state: Lesson,
     ) -> ReverseMutation {
         ReverseMutation::of(Self {

@@ -1,9 +1,4 @@
-use super::{
-    annealing_state::AnnealingState,
-    energy::{BufferStatistics, EnergyWeights},
-    illegal_buffer::IllegalBuffer,
-    mutation::*,
-};
+use super::{annealing_state::AnnealingState, energy::{BufferStatistics, EnergyWeights}, illegal_buffer::IllegalBuffer, inner_state::InnerState, mutation::*};
 
 use std::{
     collections::{HashMap, HashSet},
@@ -47,17 +42,13 @@ pub struct AnnealingBuffer {
     pub can_teach: HashSet<CanTeach>,
     pub can_hold: HashSet<CanHold>,
 
-    pub classroom_time_map: HashMap<ClassroomTimeKey, u8>,
-    pub teacher_time_map: HashMap<TeacherTimeKey, u8>,
-    pub lessons: Vec<Lesson>,
+    pub inner_state: InnerState,
 }
 
 impl std::fmt::Debug for AnnealingBuffer {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("AnnealingBuffer")
-            .field("lessons", &self.lessons)
-            .field("classroom_time_map", &self.classroom_time_map)
-            .field("teacher_time_map", &self.teacher_time_map)
+            .field("InnerState", &self.inner_state)
             .finish()
     }
 }
@@ -66,52 +57,20 @@ impl AnnealingBuffer {
     pub fn new(number_of_lessons: usize, max_time: u8) -> Self {
         Self {
             max_time,
-            lessons: vec![Default::default(); number_of_lessons],
+            inner_state: InnerState::new(number_of_lessons),
             ..Default::default()
         }
     }
 
     pub fn place_lesson(
         &mut self,
-        lesson: u8,
+        lesson: usize,
         teacher: u8,
         classroom: u8,
         time: u8,
         group: u8,
     ) -> bool {
-        assert!(
-            self.lessons.len() > lesson as usize,
-            "Lesson buffer is shorter than lesson id"
-        );
-
-        if self
-            .classroom_time_map
-            .contains_key(&ClassroomTimeKey { classroom, time })
-        {
-            return false;
-        }
-
-        if self
-            .teacher_time_map
-            .contains_key(&TeacherTimeKey { teacher, time })
-        {
-            return false;
-        }
-
-        self.classroom_time_map
-            .insert(ClassroomTimeKey { classroom, time }, lesson);
-        self.teacher_time_map
-            .insert(TeacherTimeKey { teacher, time }, lesson);
-
-        let lesson_ref = self.lessons.get_mut(lesson as usize);
-        *lesson_ref.unwrap() = Lesson {
-            classroom,
-            teacher,
-            time,
-            group,
-        };
-
-        true
+        self.inner_state.place_lesson(lesson, teacher, classroom, time, group)
     }
 
     pub fn check_collision(&self, time: u8, classroom: u8, teacher: u8) -> CollisionCheck {
@@ -236,15 +195,6 @@ impl AnnealingBuffer {
 
         self.lessons[first_lesson_index as usize].time = second_lesson.time;
         self.lessons[second_lesson_index as usize].time = first_lesson.time;
-
-        self.assert_maps_synchronized(&format!("After swap in time {} and {}: \nfirst: {:?}, \nsecond: {:?}, \ntimemap_first: teacher {:?}, classroom {:?}, \ntimemap_second: teacher {:?}, classroom {:?}",
-                                               first_lesson_index, second_lesson_index,
-                                               self.lessons[first_lesson_index as usize], self.lessons[second_lesson_index as usize],
-                                               self.teacher_time_map.get(&TeacherTimeKey{teacher: self.lessons[first_lesson_index as usize].teacher, time: self.lessons[first_lesson_index as usize].time}).unwrap(),
-                                               self.classroom_time_map.get(&ClassroomTimeKey{classroom: self.lessons[first_lesson_index as usize].classroom, time: self.lessons[first_lesson_index as usize].time}).unwrap(),
-                                               self.teacher_time_map.get(&TeacherTimeKey{teacher: self.lessons[second_lesson_index as usize].teacher, time: self.lessons[second_lesson_index as usize].time}).unwrap(),
-                                               self.classroom_time_map.get(&ClassroomTimeKey{classroom: self.lessons[second_lesson_index as usize].classroom, time: self.lessons[second_lesson_index as usize].time}).unwrap(),
-                                               ));
     }
 
     fn apply_mutation_impl(&mut self, mutation: Mutation) -> ApplyMutationResult {

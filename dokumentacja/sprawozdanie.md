@@ -8,6 +8,7 @@ fontsize: 8pt
 geometry: margin=3cm
 numbersections: true
 
+mainfont: Liberation Serif
 monofont: Iosevka Term
 
 header-includes: |

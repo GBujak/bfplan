@@ -38,7 +38,7 @@ impl BufferStatistics {
     pub fn emplace_of_buffer(&mut self, buffer: &AnnealingBuffer) {
         self.clear();
 
-        let mut lesson_buffer = buffer.lessons.clone();
+        let mut lesson_buffer = buffer.inner_state.state_ref().lessons.clone();
         lesson_buffer.sort_by_key(|l| l.time);
 
         for lesson in lesson_buffer.iter() {
