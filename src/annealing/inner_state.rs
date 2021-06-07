@@ -1,8 +1,6 @@
 use std::collections::HashMap;
 
-use super::mutation::{
-    Mutation, MutationType
-};
+use super::mutation::{Mutation, MutationType};
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 pub struct ClassroomTimeKey {
@@ -74,6 +72,7 @@ pub struct InnerState {
     group_time: HashMap<GroupTimeKey, usize>,
 }
 
+#[derive(Debug)]
 pub struct InnerStateRef<'a> {
     pub lessons: &'a Vec<Lesson>,
 
@@ -110,13 +109,24 @@ impl InnerState {
         self.collision_checks(lesson) == [None; 3]
     }
 
-    pub fn check_collision(&self, lesson: Lesson) -> InnerCollision {
+    pub fn check_collision(&self, lesson: Lesson, lesson_id: usize) -> InnerCollision {
         let mut result = InnerCollision::NoCollisions;
         for col_option in &self.collision_checks(lesson) {
             if let Some(col) = *col_option {
                 match result {
-                    InnerCollision::NoCollisions => result = InnerCollision::CollidesWithOne(*col),
-                    InnerCollision::CollidesWithOne(_) => result = InnerCollision::TooComplex,
+                    InnerCollision::NoCollisions => {
+                        // Lekcja nie koliduje sama z sobą.
+                        if *col != lesson_id {
+                            result = InnerCollision::CollidesWithOne(*col);
+                        }
+                    }
+                    InnerCollision::CollidesWithOne(previous_collision) => {
+                        // Podwójna kolizja z tą samą lekcją nie powoduje problemów.
+                        // Lekcja nie koliduje sama z sobą.
+                        if previous_collision != *col && *col != lesson_id {
+                            result = InnerCollision::TooComplex;
+                        }
+                    }
                     InnerCollision::TooComplex => {}
                 }
             }
@@ -138,6 +148,7 @@ impl InnerState {
         assert_eq!(insert_results, [None; 3]);
     }
 
+    // Używane spoza tego modułu przez AnnealingAdapter
     pub fn place_lesson(
         &mut self,
         lesson_id: usize,
@@ -168,17 +179,116 @@ impl InnerState {
 
     pub fn assert_maps_synchronized(&self) {
         for (lesson_id, lesson) in self.lessons.iter().enumerate() {
-            assert_eq!(self.collision_checks(*lesson), [Some(&lesson_id); 3]);
+            assert_eq!(
+                self.collision_checks(*lesson), [Some(&lesson_id); 3],
+                "Maps not synchronized\n{:?}", self.state_ref()
+            );
         }
     }
 
-    fn apply_non_time_mutation(&mut self, mutation: Mutation) {
-        let lesson = self.lessons[mutation.target_lesson];
+    fn remove_lesson(&mut self, lesson_id: usize) {
+        let lesson = self.lessons[lesson_id];
+
+        let removed = [
+            self.classroom_time.remove(&lesson.classroom_time_key()),
+            self.teacher_time.remove(&lesson.teacher_time_key()),
+            self.group_time.remove(&lesson.group_time_key()),
+        ];
+
+        assert_eq!(
+            removed, [Some(lesson_id); 3],
+            "Unexpected lesson when removing, expected {}", lesson_id
+        );
     }
 
-    fn apply_time_mutation(&mut self, mutation: Mutation) {}
+    fn replace_lessons(&mut self, left_id: usize, left_new_state: Lesson, right_id: usize, right_new_state: Lesson) {
+        self.remove_lesson(left_id);
+        self.remove_lesson(right_id);
 
-    pub fn apply_mutation(&mut self, mutation: Mutation) {
+        self.put_lesson(left_new_state, left_id);
+        self.put_lesson(right_new_state, right_id);
+    }
+
+    fn apply_non_time_mutation(&mut self, mutation: Mutation) -> bool {
+        let target_lesson = mutation.target_lesson;
+        let lesson = self.lessons[target_lesson];
+        let changed_lesson = match mutation.mutation_type {
+            MutationType::ChangeTeacher(new_teacher) => lesson.with_teacher(new_teacher),
+            MutationType::ChangeClassroom(new_classroom) => lesson.with_classroom(new_classroom),
+            _ => unreachable!(),
+        };
+
+        let collision = self.check_collision(changed_lesson, mutation.target_lesson);
+
+        match collision {
+            InnerCollision::NoCollisions => {
+                self.remove_lesson(target_lesson);
+                self.put_lesson(changed_lesson, target_lesson);
+            },
+            InnerCollision::CollidesWithOne(collision_id) => {
+                let collision_old_state = self.lessons[collision_id];
+                let collision_new_state = match mutation.mutation_type {
+                    MutationType::ChangeTeacher(_) => collision_old_state.with_teacher(lesson.teacher),
+                    MutationType::ChangeClassroom(_) => collision_old_state.with_classroom(lesson.classroom),
+                    _ => unreachable!(),
+                };
+                self.replace_lessons(
+                    target_lesson,
+                    changed_lesson,
+                    collision_id,
+                    collision_new_state
+                );
+            },
+            InnerCollision::TooComplex => return false,
+        }
+        true
+    }
+
+    fn apply_time_mutation(&mut self, mutation: Mutation) -> bool {
+        let target_lesson = mutation.target_lesson;
+        let lesson_old_state = self.lessons[target_lesson];
+        let new_time = match mutation.mutation_type {
+            MutationType::ChangeTime(time) => time,
+            _ => unreachable!(),
+        };
+
+        let lesson_new_state = lesson_old_state.with_time(new_time);
+
+        let collision = self.check_collision(lesson_new_state, target_lesson);
+
+        match collision {
+            InnerCollision::NoCollisions => {
+                self.remove_lesson(target_lesson);
+                self.put_lesson(lesson_new_state, target_lesson);
+            },
+            InnerCollision::CollidesWithOne(collision_id) => {
+                let collision_old_state = self.lessons[collision_id];
+                let collision_new_state = collision_old_state.with_time(lesson_old_state.time);
+
+                let recursive_collision = self.check_collision(collision_new_state, collision_id);
+                if let InnerCollision::TooComplex = recursive_collision {
+                    return false;
+                }
+
+                // Kolizja rekurencyjna musi wynosić CollidesWithOne(target_lesson) albo TooComplex.
+                // Jeśli kolizja jest równa NoCollisions, jest to błąd programu.
+                assert_eq!(
+                    recursive_collision, InnerCollision::CollidesWithOne(target_lesson),
+                    "Recursive collision is not with the original lesson"
+                );
+
+                self.remove_lesson(target_lesson);
+                self.remove_lesson(collision_id);
+
+                self.put_lesson(lesson_new_state, target_lesson);
+                self.put_lesson(collision_new_state, collision_id);
+            },
+            InnerCollision::TooComplex => return false,
+        };
+        true
+    }
+
+    pub fn apply_mutation(&mut self, mutation: Mutation) -> bool {
         match &mutation.mutation_type {
             &MutationType::ChangeTime(_) => self.apply_time_mutation(mutation),
             _ => self.apply_non_time_mutation(mutation),
@@ -186,11 +296,17 @@ impl InnerState {
     }
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub enum InnerCollision {
     NoCollisions,
     CollidesWithOne(usize),
     TooComplex,
+}
+
+impl InnerCollision {
+    pub fn is_no_collisions(&self) -> bool {
+        if let Self::NoCollisions = self { true } else { false }
+    }
 }
 
 impl std::fmt::Debug for InnerState {
