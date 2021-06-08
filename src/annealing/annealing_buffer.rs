@@ -94,7 +94,7 @@ impl AnnealingBuffer {
             }
             print!(
                 "\rPrzyjęto {} mutacji, energia = {}, średnio odrzucone na przyjęte: {}   ",
-                i,
+                i + 1,
                 statistics.energy(weights),
                 rejected / i as f64
             );
