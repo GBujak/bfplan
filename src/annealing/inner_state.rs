@@ -177,11 +177,14 @@ impl InnerState {
         true
     }
 
-    pub fn assert_maps_synchronized(&self) {
+    pub fn assert_maps_synchronized(&self, msg: &str) {
         for (lesson_id, lesson) in self.lessons.iter().enumerate() {
             assert_eq!(
-                self.collision_checks(*lesson), [Some(&lesson_id); 3],
-                "Maps not synchronized\n{:?}", self.state_ref()
+                self.collision_checks(*lesson),
+                [Some(&lesson_id); 3],
+                "Maps not synchronized ({})\n{:?}",
+                msg,
+                self.state_ref()
             );
         }
     }
@@ -196,12 +199,20 @@ impl InnerState {
         ];
 
         assert_eq!(
-            removed, [Some(lesson_id); 3],
-            "Unexpected lesson when removing, expected {}", lesson_id
+            removed,
+            [Some(lesson_id); 3],
+            "Unexpected lesson when removing, expected {}",
+            lesson_id
         );
     }
 
-    fn replace_lessons(&mut self, left_id: usize, left_new_state: Lesson, right_id: usize, right_new_state: Lesson) {
+    fn replace_lessons(
+        &mut self,
+        left_id: usize,
+        left_new_state: Lesson,
+        right_id: usize,
+        right_new_state: Lesson,
+    ) {
         self.remove_lesson(left_id);
         self.remove_lesson(right_id);
 
@@ -224,21 +235,25 @@ impl InnerState {
             InnerCollision::NoCollisions => {
                 self.remove_lesson(target_lesson);
                 self.put_lesson(changed_lesson, target_lesson);
-            },
+            }
             InnerCollision::CollidesWithOne(collision_id) => {
                 let collision_old_state = self.lessons[collision_id];
                 let collision_new_state = match mutation.mutation_type {
-                    MutationType::ChangeTeacher(_) => collision_old_state.with_teacher(lesson.teacher),
-                    MutationType::ChangeClassroom(_) => collision_old_state.with_classroom(lesson.classroom),
+                    MutationType::ChangeTeacher(_) => {
+                        collision_old_state.with_teacher(lesson.teacher)
+                    }
+                    MutationType::ChangeClassroom(_) => {
+                        collision_old_state.with_classroom(lesson.classroom)
+                    }
                     _ => unreachable!(),
                 };
                 self.replace_lessons(
                     target_lesson,
                     changed_lesson,
                     collision_id,
-                    collision_new_state
+                    collision_new_state,
                 );
-            },
+            }
             InnerCollision::TooComplex => return false,
         }
         true
@@ -260,7 +275,7 @@ impl InnerState {
             InnerCollision::NoCollisions => {
                 self.remove_lesson(target_lesson);
                 self.put_lesson(lesson_new_state, target_lesson);
-            },
+            }
             InnerCollision::CollidesWithOne(collision_id) => {
                 let collision_old_state = self.lessons[collision_id];
                 let collision_new_state = collision_old_state.with_time(lesson_old_state.time);
@@ -273,7 +288,8 @@ impl InnerState {
                 // Kolizja rekurencyjna musi wynosić CollidesWithOne(target_lesson) albo TooComplex.
                 // Jeśli kolizja jest równa NoCollisions, jest to błąd programu.
                 assert_eq!(
-                    recursive_collision, InnerCollision::CollidesWithOne(target_lesson),
+                    recursive_collision,
+                    InnerCollision::CollidesWithOne(target_lesson),
                     "Recursive collision is not with the original lesson"
                 );
 
@@ -282,7 +298,7 @@ impl InnerState {
 
                 self.put_lesson(lesson_new_state, target_lesson);
                 self.put_lesson(collision_new_state, collision_id);
-            },
+            }
             InnerCollision::TooComplex => return false,
         };
         true
@@ -305,7 +321,11 @@ pub enum InnerCollision {
 
 impl InnerCollision {
     pub fn is_no_collisions(&self) -> bool {
-        if let Self::NoCollisions = self { true } else { false }
+        if let Self::NoCollisions = self {
+            true
+        } else {
+            false
+        }
     }
 }
 
@@ -317,5 +337,31 @@ impl std::fmt::Debug for InnerState {
             .field("classroom_time", &self.classroom_time)
             .field("group_time", &self.group_time)
             .finish()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn time_mutation_works() {
+        let mut inner_state = InnerState::new(2);
+        assert_eq!(inner_state.place_lesson(0, 0, 0, 0, 0), true);
+        assert_eq!(inner_state.place_lesson(1, 0, 0, 0, 0), false);
+        assert_eq!(inner_state.place_lesson(1, 0, 0, 1, 0), true);
+
+        let mutation = Mutation::new(0, MutationType::ChangeTime(1));
+        let rev_mutation = mutation.reverse_mutation(inner_state.lessons[0]);
+
+        assert_eq!(inner_state.apply_mutation(mutation), true);
+
+        assert_eq!(inner_state.state_ref().lessons[0].time, 1);
+        assert_eq!(inner_state.state_ref().lessons[1].time, 0);
+
+        assert_eq!(inner_state.apply_mutation(rev_mutation.get()), true);
+
+        assert_eq!(inner_state.state_ref().lessons[0].time, 0);
+        assert_eq!(inner_state.state_ref().lessons[1].time, 1);
     }
 }

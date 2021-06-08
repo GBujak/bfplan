@@ -77,11 +77,10 @@ impl Mutation {
     // mutacji `self`
     pub fn reverse_mutation(
         &self,
-        applied_to_id: usize,
         previous_lesson_state: Lesson,
     ) -> ReverseMutation {
         ReverseMutation::of(Self {
-            target_lesson: applied_to_id,
+            target_lesson: self.target_lesson,
             mutation_type: match self.mutation_type {
                 ChangeTeacher(_) => ChangeTeacher(previous_lesson_state.teacher),
                 ChangeTime(_) => ChangeTime(previous_lesson_state.time),
