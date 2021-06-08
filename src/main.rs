@@ -24,7 +24,7 @@ fn main() {
     dbg!(&buffer);
 
     buffer.anneal_iterations(
-        1_000_000,
+        10_000_000,
         &EnergyWeights {
             student_gap_weight: 1.0,
             teacher_gap_weight: 1.0,
@@ -34,7 +34,7 @@ fn main() {
     buffer.assert_maps_synchronized("After adapter::create_annealing_buffer");
 
     let output = annealing_adapter.buffer_to_output(&buffer);
-    dbg!(output.len());
+    //dbg!(output.len());
 
     use std::io::prelude::*;
     File::create("output.json").unwrap().write_all(serde_json::to_string_pretty(&output).unwrap().as_bytes()).unwrap();

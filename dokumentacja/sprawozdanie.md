@@ -27,7 +27,7 @@ header-includes: |
     Marcin Majdański\\
     \vspace{2cm}
 
-    \Huge Układanie planu zajęć na studiach niestacjionarnych\\
+    \Huge Układanie planu zajęć na studiach niestacjonarnych\\
     \vspace{2cm}
 
     \large Projekt zespołowy\\

@@ -73,6 +73,7 @@ impl AnnealingBuffer {
         let mut statistics = BufferStatistics::new();
         statistics.emplace_of_buffer(self);
         let mut rejected = 0_f64;
+        let mut max_rejected = 0_usize;
 
         for i in 0..iterations {
             let last_energy = statistics.energy(weights);
@@ -84,6 +85,7 @@ impl AnnealingBuffer {
                 if !annealing_state.should_accept_state(last_energy, new_energy) {
                     self.apply_reverse_mutation(rev_mutation);
                     rejected += 1.0;
+                    max_rejected = usize::max(max_rejected, j);
                 } else {
                     break;
                 }
@@ -93,10 +95,12 @@ impl AnnealingBuffer {
                 }
             }
             print!(
-                "\rPrzyjęto {} mutacji, energia = {}, średnio odrzucone na przyjęte: {}   ",
+                "\rPrzyjęto {}, energia = {}, maks odrzuconych z rzędu: {}, % odrzuconych: {}, temp: {}     ",
                 i + 1,
                 statistics.energy(weights),
-                rejected / i as f64
+                max_rejected,
+                (rejected / i as f64) * 100.0,
+                annealing_state.temperature(),
             );
             self.assert_maps_synchronized("After mutation accepted");
             annealing_state.do_step();
