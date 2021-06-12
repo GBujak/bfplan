@@ -8,7 +8,6 @@ fontsize: 8pt
 geometry: margin=3cm
 numbersections: true
 
-mainfont: Liberation Serif
 monofont: Iosevka Term
 
 header-includes: |
@@ -27,7 +26,7 @@ header-includes: |
     Marcin Majdański\\
     \vspace{2cm}
 
-    \Huge Układanie planu zajęć na studiach niestacjionarnych\\
+    \Huge Układanie planu zajęć na studiach niestacjonarnych\\
     \vspace{2cm}
 
     \large Projekt zespołowy\\
@@ -98,10 +97,11 @@ Są to: tablica i trzy tablice mieszające. Taka kombinacja znacznie zwiększa
 skomplikowanie programu, ale przyspiesza wykonywanie mutacji. Zwykła tablica
 przechowuje struktury zawierające dane o pojedynczej lekcji. Są to grupa studencka,
 nauczyciel, sala lekcyjna i czas. Tablice mieszające mapują pary czasu i innych
-charakterystyk do lekcji, która posiada taką kombinację czasu i charakterystyki. W
-pseudokodzie można to przedstawić jako.
+charakterystyk do lekcji, która posiada taką kombinację czasu i charakterystyki. 
 
-```
+W pseudokodzie można to przedstawić jako:
+
+``` typescript
 struct PlanLekcji {
     lekcje: Array<{czas: int, grupa: int, nauczyciel: int, sala: int}>,
 
@@ -136,8 +136,62 @@ wykonywana jest mutacja odwrotna.
 
 ## Obliczanie energii
 
+Obliczanie energii jest wykonywane w metodach struktury BufferStatistics. W
+zwiększenia wydajności programu, różne składowe energii są obliczane w tym samym
+czasie. Znacznie komplikuje to logikę programu, ale dzięki temu program do
+obliczenia energii planu musi iterować po lekcjach tylko raz.
+
+Przykładowo rozdzielenie obliczania ilości okienek prowadzących i ilości okienek
+studentów do osobnych funkcji uprościłoby logikę programu - każda funkcja
+byłaby odpowiedzialna za jeden problem. Spowodowałoby to jednak konieczność
+napisania dwóch pętli, a nie jednej.
+
+### Wagi energii
+
+Energia stanu zależy od wielu czynników. Są to na przykład okienka studentów i
+okienka wykładowców. Energia dla tych czynników jest obliczana osobno.
+Następnie, z wykorzystaniem wag podanych przez użytkownika, wektorowa energia
+jest przetwarzana na liczbę zmiennoprzecinkową.
+
+## Stany nielegalne
+
+Plan lekcji, który algorytm uzna za najlepszy nie zawsze jest możliwy do
+zastosowania. Jest tak na przykład, gdy jakiś prowadzący nie jest w stanie
+pracować pewnego dnia, lub jakaś sala pewnego dnia nie będzie w stanie
+umożliwiającym prowadzenie zajęć.
+
+Zmiana ręczna wygenerowanego planu może okazać się trudna. Przeniesienie jednej
+lekcji na inny dzień może spowodować przypisanie dwóch lekcji do tej samej sali
+w tym samym czasie. Żeby rozwiązać ten problem, dodaliśmy do programu "stany
+nielegalne".
+
+Są one przedstawione w programie, jako zdanie SVO (Subject Verb Object):
+
+* Podmiot (Subject) - zawarty w IllegalStateSubject,
+* Orzeczenie (Verb) - zawsze domyślne "nie może być związany z",
+* Dopełnienie (Object) - zawarty w IllegalStateObject.
+
+``` rust
+pub enum IllegalStateSubject {
+    StudentGroup(String),
+    Teacher(String),
+    Classroom(String),
+}
+
+pub enum IllegalStateObject {
+    StudentGroup(String),
+    Teacher(String),
+    Day(u8),
+    DayHour(SimpleDate),
+    Classroom(String),
+}
+```
+
+Program, przy wprowadzaniu mutacji, sprawdzi, czy nowy stan zmienionych lekcji
+nie posiada żadnego z wprowadzonych stanów nielegalnych. Gdy tak będzie, mutacja
+zostanie odrzucona.
+
 # Bibliografia
 
 - <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018&rep=rep1&type=pdf> (dostęp: 2021-05-22)
-- <http://arantxa.ii.uam.es/~die/[Lectura%20EDA]%20Annealing%20-%20Rutenbar.pdf>
-  (dostęp: 2021-05-22)
+- <http://arantxa.ii.uam.es/~die/[Lectura%20EDA]%20Annealing%20-%20Rutenbar.pdf> (dostęp: 2021-05-22)
