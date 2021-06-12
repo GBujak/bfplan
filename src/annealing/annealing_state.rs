@@ -10,7 +10,7 @@ impl AnnealingState {
         Self {
             iteration: 0,
             max_iterations,
-            temperature: 1.0,
+            temperature: 10.0,
         }
     }
 
@@ -22,7 +22,7 @@ impl AnnealingState {
     pub fn do_step(&mut self) {
         use super::annealing_functions::temperature;
         self.iteration += 1;
-        self.temperature = temperature(self.iteration as f32 / self.max_iterations as f32);
+        self.temperature *= 0.999999;
     }
 
     pub fn temperature(&self) -> f32 {
