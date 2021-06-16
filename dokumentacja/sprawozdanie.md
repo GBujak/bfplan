@@ -19,15 +19,15 @@ header-includes: |
     \centering
     \Large Politechnika Świętokrzyska \\
     Wydział Elektrotechniki, Automatyki i Informatyki\\
-    \vspace{2cm}
+    \vspace{4cm}
 
     Grzegorz Bujak\\
     Arkadiusz Markowski\\
     Marcin Majdański\\
-    \vspace{2cm}
+    \vspace{3cm}
 
     \Huge Układanie planu zajęć na studiach niestacjonarnych\\
-    \vspace{2cm}
+    \vspace{3cm}
 
     \large Projekt zespołowy\\
     na studiach stacjonarnych\\
@@ -35,7 +35,7 @@ header-includes: |
     \vspace{4cm}
 
     \raggedleft Opiekun projektu:\\
-    doktor inżynier Grzegorz Słoń
+    Doktor Inżynier Grzegorz Słoń
 \end{figure}
 
 \vspace{1cm}
@@ -53,6 +53,11 @@ header-includes: |
 Problem, który postanowiliśmy rozwiązać to układanie planu lekcji na studiach
 niestacjonarnych. Problem można interpretować na wiele sposobów. W tym projekcie
 traktujemy ten problem jako problem optymalizacji.
+
+Do napisania algorytmu wykorzystaliśmy język Rust. Programy napisane w tym języku
+kompilują się do kodu maszynowego i są tak wydajne, jak programy napisane w C++.
+
+Do prezentacji ułożonego planu wykorzystaliśmy HTML.
 
 # Podstawa teoretyczna
 
@@ -78,7 +83,7 @@ akceptuje zmianę stanu, która pogarsza wynik. Dzięki temu, algorytm nie zatrz
 się w minimum lokalnym.
 
 Temperatura maleje przy każdej zmianie stanu. Przy niskiej temperaturze, algorytm
-zaczyna działać jak algorytm zachłanny. 
+zaczyna działać jak algorytm zachłanny. (odwołanie 1) (odwołanie 2)
 
 # Algorytm obliczeniowy
 
@@ -191,7 +196,41 @@ Program, przy wprowadzaniu mutacji, sprawdzi, czy nowy stan zmienionych lekcji
 nie posiada żadnego z wprowadzonych stanów nielegalnych. Gdy tak będzie, mutacja
 zostanie odrzucona.
 
+# Opis działania aplikacji
+
+Program implementujący algorytm to aplikacja terminalowa. Aplikacja spodziewa się
+otrzymania danych do ułożenia planu w formacie JSON na standardowe wejście (`stdin`).
+
+Ręczne uruchomienie programu wygląda tak:
+
+```
+$ ./bfplan < ./test.json
+```
+
+Aplikacja zapisuje wynik pracy do pliku output.json.
+
+# Podsumowanie i wnioski
+
+Algorytmy genetyczne są trudne do debugowania. Z tego powodu należy zadbać o dobrą
+strukrutę i prostotę kodu. W pierwszej implementacji, w celu optymalizacji,
+próbowaliśmy wykorzystać to, że struktura HashMap ze standardowej biblioteki Rust
+zwraca poprzednią wartość klucza, gdy taka istnieje i próbuje się ją nadpisać.
+Próbowaliśmy zaimplementować algorytm bez czytania z map. Podmienialiśmy wartość i
+cofaliśmy podmianę, gdy była błędna. Ta optymalizacja bardzo skomplikowała program i
+musieliśmy napisać go jeszcze raz w bardziej przejrzysty sposób.
+
+Kolejnym problemem przy pisaniu takich algorytmów jest to, że błędy nie są widoczne.
+Przed dodaniem asercji w kluczowych funkcjach algorytmu, nie byliśmy świadomi
+występowania błędów.
+
 # Bibliografia
 
-- <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018&rep=rep1&type=pdf> (dostęp: 2021-05-22)
-- <http://arantxa.ii.uam.es/~die/[Lectura%20EDA]%20Annealing%20-%20Rutenbar.pdf> (dostęp: 2021-05-22)
+## Symulowane wyżarzanie - teroria
+
+1. Busetti Franco: Simulated annealing overview
+
+    <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018&rep=rep1&type=pdf> (dostęp: 2021-05-22)
+
+2. Rutenbar A. Rob: Simulated Annealing Algorithms: An Overview
+
+    <http://arantxa.ii.uam.es/~die/[Lectura%20EDA]%20Annealing%20-%20Rutenbar.pdf> (dostęp: 2021-05-22)
