@@ -75,7 +75,7 @@ impl<'a> AnnealingAdapter<'a> {
         let mut lesson_index: usize = 0;
 
         for (group_index, _group) in plan_input.student_groups.iter().enumerate() {
-            'lesson: for _subject in &plan_input.subjects {
+            'lesson: for _subject in &_group.subjects {
                 for time in 0..max_time {
                     for (teacher_index, _teacher) in plan_input.teachers.iter().enumerate() {
                         for (classroom_index, _classroom) in

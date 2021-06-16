@@ -3,18 +3,18 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub enum IllegalStateSubject {
-    StudentGroup(String),
-    Teacher(String),
-    Classroom(String),
+    StudentGroup(u8),
+    Teacher(u8),
+    Classroom(u8),
 }
 
 #[derive(Serialize, Deserialize)]
 pub enum IllegalStateObject {
-    StudentGroup(String),
-    Teacher(String),
+    StudentGroup(u8),
+    Teacher(u8),
     Day(u8),
     DayHour(SimpleDate),
-    Classroom(String),
+    Classroom(u8),
 }
 
 #[derive(Serialize, Deserialize)]
@@ -41,15 +41,22 @@ impl IllegalState {
     }
 
     pub fn is_violated_by(&self, lesson: Lesson) -> bool {
-        todo!();
+        let contains_subject = match self.subject {
+            IllegalStateSubject::StudentGroup(x) if lesson.group == x => true,
+            IllegalStateSubject::Teacher(x) if lesson.teacher == x => true,
+            IllegalStateSubject::Classroom(x) if lesson.classroom == x => true,
+            _ => false,
+        };
 
-        // let contains_subject = match self.subject {
-        //     IllegalStateSubject::StudentGroup(_) => todo!(),
-        //     IllegalStateSubject::Teacher(_) => todo!(),
-        //     IllegalStateSubject::Classroom(_) => todo!(),
-        // };
+        let contains_object = match self.object {
+            IllegalStateObject::Day(x) if SimpleDate::from_u8_time(lesson.time).day == x => true,
+            IllegalStateObject::DayHour(x) if SimpleDate::from_u8_time(lesson.time) == x => true,
+            IllegalStateObject::Teacher(x) if lesson.teacher == x => true,
+            IllegalStateObject::Classroom(x) if lesson.classroom == x => true,
+            IllegalStateObject::StudentGroup(x) if lesson.group == x => true,
+            _ => false,
+        };
 
-        let simple_date = SimpleDate::from_u8_time(lesson.time);
-        false
+        (contains_subject, contains_object) == (true, true)
     }
 }

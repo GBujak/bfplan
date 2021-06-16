@@ -2,32 +2,62 @@
   "lessons": [
     {
       "group": "11A",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "4.15d",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "3.15d",
       "subject_name": "matematyka",
       "time": {
-        "day": 2,
+        "day": 0,
+        "hour": 4
+      }
+    },
+    {
+      "group": "11A",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "3.15d",
+      "subject_name": "informatyka",
+      "time": {
+        "day": 5,
+        "hour": 5
+      }
+    },
+    {
+      "group": "11A",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "4.15d",
+      "subject_name": "podstawy programowania",
+      "time": {
+        "day": 0,
+        "hour": 3
+      }
+    },
+    {
+      "group": "11A",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "4.15d",
+      "subject_name": "bazy danych",
+      "time": {
+        "day": 0,
         "hour": 2
       }
     },
     {
       "group": "11A",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "3.15d",
-      "subject_name": "informatyka",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "4.15d",
+      "subject_name": "WF",
       "time": {
-        "day": 2,
+        "day": 0,
         "hour": 1
       }
     },
     {
       "group": "11B",
       "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "3.15d",
+      "classroom": "4.15d",
       "subject_name": "matematyka",
       "time": {
-        "day": 0,
-        "hour": 3
+        "day": 5,
+        "hour": 1
       }
     },
     {
@@ -36,72 +66,52 @@
       "classroom": "4.15d",
       "subject_name": "informatyka",
       "time": {
-        "day": 0,
-        "hour": 4
+        "day": 5,
+        "hour": 0
       }
     },
     {
       "group": "12A",
-      "teacher": "mgr. Jan Kowalski 2",
+      "teacher": "mgr. Jan Kowalski",
       "classroom": "4.15d",
       "subject_name": "matematyka",
       "time": {
         "day": 1,
-        "hour": 0
+        "hour": 3
       }
     },
     {
       "group": "12A",
-      "teacher": "mgr. Jan Kowalski 2",
+      "teacher": "mgr. Jan Kowalski",
       "classroom": "4.15d",
       "subject_name": "informatyka",
       "time": {
-        "day": 0,
-        "hour": 5
-      }
-    },
-    {
-      "group": "12B",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "3.15d",
-      "subject_name": "matematyka",
-      "time": {
-        "day": 3,
-        "hour": 0
-      }
-    },
-    {
-      "group": "12B",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "3.15d",
-      "subject_name": "informatyka",
-      "time": {
-        "day": 2,
-        "hour": 5
-      }
-    },
-    {
-      "group": "13A",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "4.15d",
-      "subject_name": "matematyka",
-      "time": {
-        "day": 0,
+        "day": 1,
         "hour": 2
       }
     },
     {
-      "group": "13A",
+      "group": "12B",
       "teacher": "mgr. Jan Kowalski 2",
       "classroom": "4.15d",
-      "subject_name": "informatyka",
+      "subject_name": "matematyka",
       "time": {
-        "day": 0,
-        "hour": 1
+        "day": 5,
+        "hour": 5
       }
     },
     {
-      "group": "13B",
+      "group": "12B",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "3.15d",
+      "subject_name": "informatyka",
+      "time": {
+        "day": 5,
+        "hour": 4
+      }
+    },
+    {
+      "group": "13A",
       "teacher": "mgr. Jan Kowalski 2",
       "classroom": "3.15d",
       "subject_name": "matematyka",
@@ -111,9 +121,9 @@
       }
     },
     {
-      "group": "13B",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "4.15d",
+      "group": "13A",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "3.15d",
       "subject_name": "informatyka",
       "time": {
         "day": 1,
@@ -121,23 +131,43 @@
       }
     },
     {
-      "group": "14A",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "4.15d",
+      "group": "13B",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "3.15d",
       "subject_name": "matematyka",
       "time": {
-        "day": 3,
-        "hour": 2
+        "day": 5,
+        "hour": 0
+      }
+    },
+    {
+      "group": "13B",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "3.15d",
+      "subject_name": "informatyka",
+      "time": {
+        "day": 5,
+        "hour": 1
       }
     },
     {
       "group": "14A",
       "teacher": "mgr. Jan Kowalski 2",
       "classroom": "3.15d",
+      "subject_name": "matematyka",
+      "time": {
+        "day": 5,
+        "hour": 3
+      }
+    },
+    {
+      "group": "14A",
+      "teacher": "mgr. Jan Kowalski 2",
+      "classroom": "4.15d",
       "subject_name": "informatyka",
       "time": {
-        "day": 3,
-        "hour": 1
+        "day": 5,
+        "hour": 4
       }
     },
     {
@@ -146,18 +176,18 @@
       "classroom": "4.15d",
       "subject_name": "matematyka",
       "time": {
-        "day": 3,
-        "hour": 4
+        "day": 4,
+        "hour": 3
       }
     },
     {
       "group": "14B",
       "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "4.15d",
+      "classroom": "3.15d",
       "subject_name": "informatyka",
       "time": {
-        "day": 3,
-        "hour": 3
+        "day": 4,
+        "hour": 4
       }
     },
     {
@@ -166,17 +196,17 @@
       "classroom": "4.15d",
       "subject_name": "matematyka",
       "time": {
-        "day": 1,
-        "hour": 1
+        "day": 2,
+        "hour": 3
       }
     },
     {
       "group": "15A",
       "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "3.15d",
+      "classroom": "4.15d",
       "subject_name": "informatyka",
       "time": {
-        "day": 1,
+        "day": 5,
         "hour": 2
       }
     },
@@ -186,8 +216,8 @@
       "classroom": "3.15d",
       "subject_name": "matematyka",
       "time": {
-        "day": 2,
-        "hour": 3
+        "day": 3,
+        "hour": 1
       }
     },
     {
@@ -196,32 +226,12 @@
       "classroom": "3.15d",
       "subject_name": "informatyka",
       "time": {
-        "day": 2,
-        "hour": 4
+        "day": 3,
+        "hour": 2
       }
     },
     {
       "group": "16A",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "4.15d",
-      "subject_name": "matematyka",
-      "time": {
-        "day": 2,
-        "hour": 0
-      }
-    },
-    {
-      "group": "16A",
-      "teacher": "mgr. Jan Kowalski 2",
-      "classroom": "4.15d",
-      "subject_name": "informatyka",
-      "time": {
-        "day": 1,
-        "hour": 5
-      }
-    },
-    {
-      "group": "16B",
       "teacher": "mgr. Jan Kowalski",
       "classroom": "4.15d",
       "subject_name": "matematyka",
@@ -231,13 +241,33 @@
       }
     },
     {
-      "group": "16B",
+      "group": "16A",
       "teacher": "mgr. Jan Kowalski",
       "classroom": "3.15d",
       "subject_name": "informatyka",
       "time": {
         "day": 5,
         "hour": 2
+      }
+    },
+    {
+      "group": "16B",
+      "teacher": "mgr. Jan Kowalski",
+      "classroom": "3.15d",
+      "subject_name": "matematyka",
+      "time": {
+        "day": 1,
+        "hour": 1
+      }
+    },
+    {
+      "group": "16B",
+      "teacher": "mgr. Jan Kowalski 2",
+      "classroom": "3.15d",
+      "subject_name": "informatyka",
+      "time": {
+        "day": 0,
+        "hour": 5
       }
     }
   ]

@@ -159,7 +159,8 @@ impl InnerState {
     ) -> bool {
         assert!(
             self.lessons.len() > lesson_id,
-            "Lesson buffer is shorter than lesson id"
+            "Lesson buffer is shorter {} than lesson id {}",
+            self.lessons.len(), lesson_id
         );
 
         let lesson = Lesson {

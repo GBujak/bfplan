@@ -5,7 +5,10 @@
             "size": 15,
             "subjects": [
                 "matematyka",
-                "informatyka"
+                "informatyka",
+                "podstawy programowania",
+                "bazy danych",
+                "WF"
             ]
         },
         {
@@ -102,7 +105,10 @@
             "name": "mgr. Jan Kowalski",
             "can_teach": [
                 "matematyka",
-                "informatyka"
+                "informatyka",
+                "WF",
+                "bazy danych",
+                "podstawy programowania"
             ]
         },
         {
@@ -141,6 +147,21 @@
     "subjects": [
         {
             "name": "matematyka",
+            "subject_type": "Cwiczenia",
+            "count": 1
+        },
+        {
+            "name": "podstawy programowania",
+            "subject_type": "Cwiczenia",
+            "count": 1
+        },
+        {
+            "name": "bazy danych",
+            "subject_type": "Cwiczenia",
+            "count": 1
+        },
+        {
+            "name": "WF",
             "subject_type": "Cwiczenia",
             "count": 1
         },
