@@ -214,7 +214,8 @@ $ ./bfplan < ./test.json
 Aplikacja zapisuje wynik pracy do pliku output.json.
 
 Po utworzeniu plików z wynikami powinny być one przeniesione na stronę internetową (niezaimplementowane) i widoczny powinien być utworzony plan zajęć.
-![Przykładowe zdjęcie planu](./plan.png){width=80%}
+
+![Przykładowe zdjęcie planu](./plan.png)
 
 # Podsumowanie i wnioski
 
@@ -232,10 +233,25 @@ występowania błędów.
 
 # Instrukcja obsługi aplikacji
 
-Obsługa strony internetowej jest intuicyjna. Zdecydowaną większość strony zajmuje sam plan, na którym zajęcia są oznakowane różnymi kolorami w zależności od typu zajęć, co opisane jest także w legendzie poniżej planu.
-![Przykładowe zdjęcie planu](./plan.png){width=80%}
+Obsługa strony internetowej jest intuicyjna. Większość strony zajmuje sam plan, na którym zajęcia są oznakowane różnymi kolorami w zależności od typu zajęć, co opisane jest także w legendzie poniżej planu.
+
+![Przykładowe zdjęcie planu](./plan.png)
+
 Na górze strony znajduje się menu, w którym możemy wybrać wyświetlany plan w zależności od grupy, prowadzącego zajęcia lub przedmiotu.
-![Wybór grupy w menu górnym](./wybor.png){width=80%}
+
+![Wybór grupy w menu górnym](./wybor.png)
+
+Tuż nad samym planem znajduje się okienko z wyborem, który tydzień ma być pokazywany.
+
+![Widok wyboru tygodnia](./tydzien.png)
+
+Dodatkową funkcjonalnością na stronie jest możliwość ustawienia trybu ciemnego poprzez suwak znajdujący się w prawym górnym rogu strony.
+
+![Strona z włączonym trybem ciemnym](./dark.png)
+
+W prawym górnym rogu strony znajduje się przycisk zaloguj, który przenosi użytkownika na stronę logowania.
+
+![Ekran logowania](./loguj.png)
 
 # Bibliografia
 
