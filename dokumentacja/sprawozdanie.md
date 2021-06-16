@@ -58,14 +58,14 @@ header-includes: |
 
 # Charakterystyka zadania
 
-Problem, który postanowiliśmy rozwiązać to układanie planu lekcji na studiach
-niestacjonarnych. Problem można interpretować na wiele sposobów. W tym projekcie
-traktujemy ten problem jako problem optymalizacji.
+Rozwiązywany problem to układanie planu lekcji na studiach niestacjonarnych. Problem
+można interpretować na wiele sposobów. W tym projekcie jest traktowany jako problem
+optymalizacji.
 
-Do napisania algorytmu wykorzystaliśmy język Rust. Programy napisane w tym języku
+Do napisania algorytmu wykorzystano język Rust. Programy napisane w tym języku
 kompilują się do kodu maszynowego i są tak wydajne, jak programy napisane w C++.
 
-Do prezentacji ułożonego planu wykorzystaliśmy HTML.
+Do prezentacji ułożonego planu jest używany HTML.
 
 Kody źródłowe:
 
@@ -100,9 +100,8 @@ zaczyna działać jak algorytm zachłanny. (odwołanie 1) (odwołanie 2)
 
 # Algorytm obliczeniowy
 
-Program, który napisaliśmy implementuje algorytm symulowanego wyżarzania opisany w
-poprzedniej sekcji. W tej sekcji, opisaliśmy, w jaki sposób nasz program implementuje
-ten algorytm.
+Napisany program implementuje algorytm symulowanego wyżarzania opisany w poprzedniej
+sekcji. W tej sekcji opisany jest sposób, w jaki program implementuje ten algorytm.
 
 Większość czasu działania programu odbywa się w nieskończonej pętli, której działanie
 jest opisane w krokach w poprzedniej sekcji. Nasza implementacja algorytmu przerywa
@@ -142,10 +141,10 @@ Problemem typowej implementacji algorytmu symulowanego wyżarzania do rozwiązan
 problemu szukania planu lekcji jest rozmiar stanu. Typowa implementacja algorytmu
 wykonuje kopię całego stanu.
 
-Stwierdziliśmy, że kopiowanie stanu planu lekcji byłoby zbyt kosztowne. Z tego
-powodu, zaimplementowaliśmy coś co nazwaliśmy "mutacjami".  Mutacja to struktura
-przechowująca rodzaj zmiany stanu i pozwalająca na wygenerowanie mutacji odwrotnej,
-której wykonanie przywróci stan przed oryginalną mutacją.
+Kopiowanie stanu planu lekcji byłoby kosztowne. Z tego powodu, w programie są
+zaimplementowane "mutacje". Mutacja to struktura przechowująca rodzaj zmiany stanu i
+pozwalająca na wygenerowanie mutacji odwrotnej, której wykonanie przywróci stan przed
+oryginalną mutacją.
 
 Losowanie stanu sąsiedniego w naszym programie polega na losowaniu mutacji. Mutacja
 jest następnie wykonywana na stanie programu. Oceniana jest energia stanu po mutacji
@@ -179,9 +178,8 @@ pracować pewnego dnia, lub jakaś sala pewnego dnia nie będzie w stanie
 umożliwiającym prowadzenie zajęć.
 
 Zmiana ręczna wygenerowanego planu może okazać się trudna. Przeniesienie jednej
-lekcji na inny dzień może spowodować przypisanie dwóch lekcji do tej samej sali
-w tym samym czasie. Żeby rozwiązać ten problem, dodaliśmy do programu "stany
-nielegalne".
+lekcji na inny dzień może spowodować przypisanie dwóch lekcji do tej samej sali w tym
+samym czasie. Żeby rozwiązać ten problem, program posiada "stany nielegalne".
 
 Są one przedstawione w programie, jako zdanie SVO (Subject Verb Object):
 
@@ -230,16 +228,17 @@ Po utworzeniu plików z wynikami powinny być one przeniesione na stronę intern
 # Podsumowanie i wnioski
 
 Algorytmy genetyczne są trudne do debugowania. Z tego powodu należy zadbać o dobrą
-strukrutę i prostotę kodu. W pierwszej implementacji, w celu optymalizacji,
-próbowaliśmy wykorzystać to, że struktura HashMap ze standardowej biblioteki Rust
-zwraca poprzednią wartość klucza, gdy taka istnieje i próbuje się ją nadpisać.
-Próbowaliśmy zaimplementować algorytm bez czytania z map. Podmienialiśmy wartość i
-cofaliśmy podmianę, gdy była błędna. Ta optymalizacja bardzo skomplikowała program i
-musieliśmy napisać go jeszcze raz w bardziej przejrzysty sposób.
+strukrutę i prostotę kodu. W pierwszej implementacji, w celu optymalizacji, program
+wykorzystywał to, że struktura HashMap ze standardowej biblioteki Rust zwraca
+poprzednią wartość klucza, gdy taka istnieje i próbuje się ją nadpisać. Pierwsza
+implementacja algorytmu nie wykonywała czytania z mapy. Toretycznie pozwalało to na
+uniknięcie podwójnego wywołania funkcji mieszającej mapy. Implementacja podmieniała
+wartość i cofała podmianę, gdy była błędna. Ta optymalizacja okazała się zbyt
+skomplikowana i została zastąpiona prostszym rozwiązaniem.
 
 Kolejnym problemem przy pisaniu takich algorytmów jest to, że błędy nie są widoczne.
-Przed dodaniem asercji w kluczowych funkcjach algorytmu, nie byliśmy świadomi
-występowania błędów.
+Błędy dało się wykryć dopiero po dodaniu asercji w najważniejszych funkcjach
+programu.
 
 # Instrukcja obsługi aplikacji
 
@@ -248,15 +247,14 @@ w zależności od typu zajęć, co opisane jest także w legendzie poniżej plan
 
 ![Przykładowe zdjęcie planu](./plan.png)
 
-Na górze strony znajduje się menu, w którym możemy wybrać wyświetlany plan w
+Na górze strony znajduje się menu, w którym można wybrać wyświetlany plan w
 zależności od grupy, prowadzącego zajęcia lub przedmiotu (Rysunek 3).
 
 ![Wybór grupy w menu górnym](./wybor.png)
 
-Tuż nad samym planem znajduje się okienko z wyborem, który tydzień ma być
-pokazywany (Rysunek 4), a zatwierzdzenie wyboru przyciskiem 'Wybierz' 
-powinno wyświetlić na ekranie plan dla wybranego przez użytkownika
-tygodnia zajęć (niezaimplementowane).
+Tuż nad samym planem znajduje się okienko z wyborem, który tydzień ma być pokazywany
+(Rysunek 4), a zatwierdzenie wyboru przyciskiem 'Wybierz' powinno wyświetlić na
+ekranie plan dla wybranego przez użytkownika tygodnia zajęć (niezaimplementowane).
 
 ![Widok wyboru tygodnia](./tydzien.png)
 
