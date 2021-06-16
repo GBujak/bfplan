@@ -261,6 +261,15 @@ użytkownika na stronę logowania (Rysunek 6).
 
 ![Ekran logowania](./loguj.png)
 
+Po zalogowaniu się na konto administratora otworzy się panel (Rysunek 7),
+w którym znajdują się zakładki 'Dodaj salę', 'Dodaj grupę'
+i 'Dodaj wykładowcę'. W każdej zakładce można dodać odpowiedni element 
+do bazy danych, z której następnie można wygenerować plan przyciskiem
+po prawej stronie zakładek (niezaimplementowane).
+
+![Widok zalogowanego administratora](./admin.png)
+
+
 # Bibliografia
 
 ## Symulowane wyżarzanie - teroria
