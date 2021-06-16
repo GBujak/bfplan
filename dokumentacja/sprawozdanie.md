@@ -182,17 +182,17 @@ Są one przedstawione w programie, jako zdanie SVO (Subject Verb Object):
 
 ``` rust
 pub enum IllegalStateSubject {
-    StudentGroup(String),
-    Teacher(String),
-    Classroom(String),
+    StudentGroup(u8),
+    Teacher(u8),
+    Classroom(u8),
 }
 
 pub enum IllegalStateObject {
-    StudentGroup(String),
-    Teacher(String),
+    StudentGroup(u8),
+    Teacher(u8),
     Day(u8),
     DayHour(SimpleDate),
-    Classroom(String),
+    Classroom(u8),
 }
 ```
 
@@ -213,7 +213,8 @@ $ ./bfplan < ./test.json
 
 Aplikacja zapisuje wynik pracy do pliku output.json.
 
-Po utworzeniu plików z wynikami powinny być one przeniesione na stronę internetową (niezaimplementowane) i widoczny powinien być utworzony plan zajęć.
+Po utworzeniu plików z wynikami powinny być one przeniesione na stronę internetową
+(niezaimplementowane) i widoczny powinien być utworzony plan zajęć.
 
 ![Przykładowe zdjęcie planu](./plan.png)
 
@@ -233,11 +234,14 @@ występowania błędów.
 
 # Instrukcja obsługi aplikacji
 
-Obsługa strony internetowej jest intuicyjna. Większość strony zajmuje sam plan, na którym zajęcia są oznakowane różnymi kolorami w zależności od typu zajęć, co opisane jest także w legendzie poniżej planu.
+Obsługa strony internetowej jest intuicyjna. Większość strony zajmuje sam plan, na
+którym zajęcia są oznakowane różnymi kolorami w zależności od typu zajęć, co opisane
+jest także w legendzie poniżej planu.
 
 ![Przykładowe zdjęcie planu](./plan.png)
 
-Na górze strony znajduje się menu, w którym możemy wybrać wyświetlany plan w zależności od grupy, prowadzącego zajęcia lub przedmiotu.
+Na górze strony znajduje się menu, w którym możemy wybrać wyświetlany plan w
+zależności od grupy, prowadzącego zajęcia lub przedmiotu.
 
 ![Wybór grupy w menu górnym](./wybor.png)
 
@@ -245,7 +249,8 @@ Tuż nad samym planem znajduje się okienko z wyborem, który tydzień ma być p
 
 ![Widok wyboru tygodnia](./tydzien.png)
 
-Dodatkową funkcjonalnością na stronie jest możliwość ustawienia trybu ciemnego poprzez suwak znajdujący się w prawym górnym rogu strony.
+Dodatkową funkcjonalnością na stronie jest możliwość ustawienia trybu ciemnego
+poprzez suwak znajdujący się w prawym górnym rogu strony.
 
 ![Strona z włączonym trybem ciemnym](./dark.png)
 
