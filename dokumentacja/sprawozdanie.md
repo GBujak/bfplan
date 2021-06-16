@@ -214,7 +214,7 @@ $ ./bfplan < ./test.json
 Aplikacja zapisuje wynik pracy do pliku output.json.
 
 Po utworzeniu plików z wynikami powinny być one przeniesione na stronę internetową
-(niezaimplementowane) i widoczny powinien być utworzony plan zajęć.
+(niezaimplementowane) i widoczny powinien być utworzony plan zajęć (Rysunek 1).
 
 ![Przykładowe zdjęcie planu](./plan.png)
 
@@ -234,27 +234,30 @@ występowania błędów.
 
 # Instrukcja obsługi aplikacji
 
-Obsługa strony internetowej jest intuicyjna. Większość strony zajmuje sam plan, na
-którym zajęcia są oznakowane różnymi kolorami w zależności od typu zajęć, co opisane
-jest także w legendzie poniżej planu.
+Większość strony zajmuje sam plan, na którym zajęcia są oznakowane różnymi kolorami
+w zależności od typu zajęć, co opisane jest także w legendzie poniżej planu (Rysunek 2).
 
 ![Przykładowe zdjęcie planu](./plan.png)
 
 Na górze strony znajduje się menu, w którym możemy wybrać wyświetlany plan w
-zależności od grupy, prowadzącego zajęcia lub przedmiotu.
+zależności od grupy, prowadzącego zajęcia lub przedmiotu (Rysunek 3).
 
 ![Wybór grupy w menu górnym](./wybor.png)
 
-Tuż nad samym planem znajduje się okienko z wyborem, który tydzień ma być pokazywany.
+Tuż nad samym planem znajduje się okienko z wyborem, który tydzień ma być
+pokazywany (Rysunek 4), a zatwierzdzenie wyboru przyciskiem 'Wybierz' 
+powinno wyświetlić na ekranie plan dla wybranego przez użytkownika
+tygodnia zajęć (niezaimplementowane).
 
 ![Widok wyboru tygodnia](./tydzien.png)
 
 Dodatkową funkcjonalnością na stronie jest możliwość ustawienia trybu ciemnego
-poprzez suwak znajdujący się w prawym górnym rogu strony.
+poprzez suwak znajdujący się w prawym górnym rogu strony (Rysunek 5).
 
 ![Strona z włączonym trybem ciemnym](./dark.png)
 
-W prawym górnym rogu strony znajduje się przycisk zaloguj, który przenosi użytkownika na stronę logowania.
+W prawym górnym rogu strony znajduje się przycisk zaloguj, który przenosi
+użytkownika na stronę logowania (Rysunek 6).
 
 ![Ekran logowania](./loguj.png)
 
