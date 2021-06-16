@@ -17,6 +17,35 @@ numbersections: true
 header-includes: |
     \usepackage{placeins}
     \usepackage{float}
+    \usepackage{enumitem}
+    \usepackage{hyperref}
+    \usepackage{xcolor}
+
+    \definecolor{codegreen}{rgb}{0,0.6,0}
+    \definecolor{codegray}{rgb}{0.5,0.5,0.5}
+    \definecolor{codepurple}{rgb}{0.58,0,0.82}
+    \definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+
+    \usepackage{listings}
+    \lstdefinestyle{mystyle}{
+        backgroundcolor=\color{backcolour},   
+        commentstyle=\color{codegreen},
+        keywordstyle=\color{magenta},
+        numberstyle=\tiny\color{codegray},
+        stringstyle=\color{codepurple},
+        basicstyle=\ttfamily\footnotesize,
+        breakatwhitespace=false,         
+        breaklines=true,                 
+        captionpos=b,                    
+        keepspaces=true,                 
+        numbers=left,                    
+        numbersep=5pt,                  
+        showspaces=false,                
+        showstringspaces=false,
+        showtabs=false,                  
+        tabsize=2
+    }
+    \lstset{style=mystyle}
 ---
 
 \begin{figure}
@@ -74,8 +103,6 @@ Kody źródłowe:
 
 # Podstawa teoretyczna
 
-## Symulowane wyżarzanie
-
 Symulowane wyżarzanie to rodzaj algorytmu heurystycznego przeszukującego przestrzeń
 alternatywnych rozwiązań problemu w celu wyszukania najlepszego. Nazwa algorytmu
 bierze się z metalurgii, gdzie metal jest podgrzewany i chłodzony w celu osiągnięcia
@@ -96,7 +123,7 @@ akceptuje zmianę stanu, która pogarsza wynik. Dzięki temu, algorytm nie zatrz
 się w minimum lokalnym.
 
 Temperatura maleje przy każdej zmianie stanu. Przy niskiej temperaturze, algorytm
-zaczyna działać jak algorytm zachłanny. (odwołanie 1) (odwołanie 2)
+zaczyna działać jak algorytm zachłanny [1] [2].
 
 # Algorytm obliczeniowy
 
@@ -109,6 +136,21 @@ pracę, gdy odrzucone zostanie 1.000.000 zmian stanu z rzędu.
 
 ## Przechowywanie stanu programu
 
+\begin{lstlisting}[caption=Stan planu lekcji w pseudokodzie]
+struct PlanLekcji {
+    lekcje: Array<{
+        czas: int,
+        grupa: int,
+        nauczyciel: int,
+        sala: int
+    }>,
+
+    czas_sala: HashMap<{czas: int, sala: int}, int>,
+    czas_nauczyciel: HashMap<{czas: int, nauczyciel: int}, int>,
+    czas_grupa: HashMap<{czas: int, grupa: int}, int>,
+}
+\end{lstlisting}
+
 Stan planu przechowywany jest w naszym programie za pomocą czterech struktur danych.
 Są to: tablica i trzy tablice mieszające. Taka kombinacja znacznie zwiększa
 skomplikowanie programu, ale przyspiesza wykonywanie mutacji. Zwykła tablica
@@ -116,17 +158,7 @@ przechowuje struktury zawierające dane o pojedynczej lekcji. Są to grupa stude
 nauczyciel, sala lekcyjna i czas. Tablice mieszające mapują pary czasu i innych
 charakterystyk do lekcji, która posiada taką kombinację czasu i charakterystyki. 
 
-W pseudokodzie można to przedstawić jako:
-
-``` typescript
-struct PlanLekcji {
-    lekcje: Array<{czas: int, grupa: int, nauczyciel: int, sala: int}>,
-
-    czas_sala: HashMap<{czas: int, sala: int}, int>,
-    czas_nauczyciel: HashMap<{czas: int, nauczyciel: int}, int>,
-    czas_grupa: HashMap<{czas: int, grupa: int}, int>,
-}
-```
+Stan planu lekcji w pseudokodzie jest przedstawiony na listingu (Listing 1).
 
 Czas jest przechowywany jako liczba całkowita. Można ją traktować jak ID.
 
@@ -172,6 +204,22 @@ jest przetwarzana na liczbę zmiennoprzecinkową.
 
 ## Stany nielegalne
 
+\begin{lstlisting}[caption=Stan nielegalny w kodzie aplikacji]
+pub enum IllegalStateSubject {
+    StudentGroup(u8),
+    Teacher(u8),
+    Classroom(u8),
+}
+
+pub enum IllegalStateObject {
+    StudentGroup(u8),
+    Teacher(u8),
+    Day(u8),
+    DayHour(SimpleDate),
+    Classroom(u8),
+}
+\end{lstlisting}
+
 Plan lekcji, który algorytm uzna za najlepszy nie zawsze jest możliwy do
 zastosowania. Jest tak na przykład, gdy jakiś prowadzący nie jest w stanie
 pracować pewnego dnia, lub jakaś sala pewnego dnia nie będzie w stanie
@@ -187,21 +235,8 @@ Są one przedstawione w programie, jako zdanie SVO (Subject Verb Object):
 * Orzeczenie (Verb) - zawsze domyślne "nie może być związany z",
 * Dopełnienie (Object) - zawarty w IllegalStateObject.
 
-``` rust
-pub enum IllegalStateSubject {
-    StudentGroup(u8),
-    Teacher(u8),
-    Classroom(u8),
-}
-
-pub enum IllegalStateObject {
-    StudentGroup(u8),
-    Teacher(u8),
-    Day(u8),
-    DayHour(SimpleDate),
-    Classroom(u8),
-}
-```
+Kod źródłowy programu opisujący fragmenty stany nielegalnego znajduje się na listingu
+(Listing 2).
 
 Program, przy wprowadzaniu mutacji, sprawdzi, czy nowy stan zmienionych lekcji
 nie posiada żadnego z wprowadzonych stanów nielegalnych. Gdy tak będzie, mutacja
@@ -276,12 +311,16 @@ po prawej stronie zakładek (niezaimplementowane).
 
 ![Widok zalogowanego administratora](./admin.png)
 
-
 # Bibliografia
 
-## Symulowane wyżarzanie - teoria
+\begin{enumerate}[label={[\arabic*]}]
 
-1. Busetti, Franco. "Simulated annealing overview." World Wide Web URL 
-   <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018&rep=rep1&type=pdf> 4 (2003). (dostęp 2021-06-15)
-2. R. A. Rutenbar, "Simulated annealing algorithms: an overview," in IEEE Circuits
-   and Devices Magazine, vol. 5, no. 1, pp. 19-26, Jan. 1989, doi: 10.1109/101.17235.
+    \item Busetti Franco. "Simulated annealing overview." World Wide Web URL
+        \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018\&rep=rep1\&type=pdf}
+        4 (2003). (dostęp 2021-06-15)
+
+    \item Rutenbar, Rob A. "Simulated annealing algorithms: an overview," in IEEE
+        Circuits and Devices Magazine, vol. 5, no. 1, pp. 19-26, Jan. 1989, doi:
+        10.1109/101.17235.
+
+\end{enumerate}
