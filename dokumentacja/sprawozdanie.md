@@ -213,6 +213,9 @@ $ ./bfplan < ./test.json
 
 Aplikacja zapisuje wynik pracy do pliku output.json.
 
+Po utworzeniu plików z wynikami powinny być one przeniesione na stronę internetową (niezaimplementowane) i widoczny powinien być utworzony plan zajęć.
+![Przykładowe zdjęcie planu](./plan.png){width=80%}
+
 # Podsumowanie i wnioski
 
 Algorytmy genetyczne są trudne do debugowania. Z tego powodu należy zadbać o dobrą
@@ -226,6 +229,13 @@ musieliśmy napisać go jeszcze raz w bardziej przejrzysty sposób.
 Kolejnym problemem przy pisaniu takich algorytmów jest to, że błędy nie są widoczne.
 Przed dodaniem asercji w kluczowych funkcjach algorytmu, nie byliśmy świadomi
 występowania błędów.
+
+# Instrukcja obsługi aplikacji
+
+Obsługa strony internetowej jest intuicyjna. Zdecydowaną większość strony zajmuje sam plan, na którym zajęcia są oznakowane różnymi kolorami w zależności od typu zajęć, co opisane jest także w legendzie poniżej planu.
+![Przykładowe zdjęcie planu](./plan.png){width=80%}
+Na górze strony znajduje się menu, w którym możemy wybrać wyświetlany plan w zależności od grupy, prowadzącego zajęcia lub przedmiotu.
+![Wybór grupy w menu górnym](./wybor.png){width=80%}
 
 # Bibliografia
 
