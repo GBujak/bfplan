@@ -1,4 +1,4 @@
-use crate::data_types::SimpleDate;
+use crate::{annealing::inner_state::Lesson, data_types::SimpleDate};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -38,5 +38,18 @@ impl IllegalState {
                 _ => return false,
             },
         }
+    }
+
+    pub fn is_violated_by(&self, lesson: Lesson) -> bool {
+        todo!();
+
+        // let contains_subject = match self.subject {
+        //     IllegalStateSubject::StudentGroup(_) => todo!(),
+        //     IllegalStateSubject::Teacher(_) => todo!(),
+        //     IllegalStateSubject::Classroom(_) => todo!(),
+        // };
+
+        let simple_date = SimpleDate::from_u8_time(lesson.time);
+        false
     }
 }

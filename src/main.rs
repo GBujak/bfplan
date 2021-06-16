@@ -21,7 +21,7 @@ fn main() {
 
     buffer.assert_maps_synchronized("After adapter::create_annealing_buffer");
 
-    dbg!(&buffer);
+    //dbg!(&buffer);
 
     buffer.anneal_iterations(
         10_000_000,

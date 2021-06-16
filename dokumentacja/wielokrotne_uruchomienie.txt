@@ -1,0 +1,17 @@
+bfplan > for i in {1..5}; do echo "\n\nUruchomienie nr. $i"; ~/.cargo/build_cache/release/bfplan < test.json; done      
+
+
+Uruchomienie nr. 1
+Przyjęto 10000000, energia = 34, maks odrzuconych z rzędu: 29, % odrzuconych: 104.02844040284404, temp: 0.00039244123
+
+Uruchomienie nr. 2
+Przyjęto 10000000, energia = 34, maks odrzuconych z rzędu: 18, % odrzuconych: 68.05104680510468, temp: 0.00039244123
+
+Uruchomienie nr. 3
+Przyjęto 10000000, energia = 34, maks odrzuconych z rzędu: 27, % odrzuconych: 78.39319783931978, temp: 0.00039244123
+
+Uruchomienie nr. 4
+Przyjęto 10000000, energia = 34, maks odrzuconych z rzędu: 22, % odrzuconych: 83.54474835447483, temp: 0.00039244123
+
+Uruchomienie nr. 5
+Przyjęto 10000000, energia = 34, maks odrzuconych z rzędu: 25, % odrzuconych: 78.13993781399378, temp: 0.00039244123

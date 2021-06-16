@@ -72,11 +72,27 @@ impl AnnealingBuffer {
         let mut annealing_state = AnnealingState::new(iterations);
         let mut statistics = BufferStatistics::new();
         statistics.emplace_of_buffer(self);
+
         let mut rejected = 0_f64;
         let mut max_rejected = 0_usize;
 
+        let mut prev_energy = 0.0f32;
+        let mut const_energy_count = 0usize;
+
         for i in 0..iterations {
             let last_energy = statistics.energy(weights);
+
+            if prev_energy == last_energy {
+                const_energy_count += 1;
+                if const_energy_count == 1_000_000 {
+                    println!("1,000,000 mutacji bez zmian energii, przerywam");
+                    return;
+                }
+            } else {
+                prev_energy = last_energy;
+                const_energy_count = 0;
+            }
+
             for j in 1..=1_000_000 {
                 let mutation = Mutation::legal_of_buffer(self);
                 let rev_mutation = self.apply_mutation(mutation);
@@ -95,9 +111,10 @@ impl AnnealingBuffer {
                 }
             }
             print!(
-                "\rPrzyjęto {}, energia = {}, maks odrzuconych z rzędu: {}, % odrzuconych: {}, temp: {}     ",
+                "\rPrzyjęto {}, energia = {} (brak zmian od {}), maks odrzuconych z rzędu: {}, % odrzuconych: {}, temp: {},    ",
                 i + 1,
                 statistics.energy(weights),
+                const_energy_count,
                 max_rejected,
                 (rejected / i as f64) * 100.0,
                 annealing_state.temperature(),

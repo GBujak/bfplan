@@ -3,12 +3,8 @@ documentclass: article
 papersize: a4
 lang: pl
 
-fontsize: 8pt
-
 geometry: margin=3cm
 numbersections: true
-
-monofont: Iosevka Term
 
 header-includes: |
     \usepackage{placeins}
@@ -193,5 +189,5 @@ zostanie odrzucona.
 
 # Bibliografia
 
-- <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018&rep=rep1&type=pdf> (dostęp: 2021-05-22)
-- <http://arantxa.ii.uam.es/~die/[Lectura%20EDA]%20Annealing%20-%20Rutenbar.pdf> (dostęp: 2021-05-22)
+1. <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018&rep=rep1&type=pdf> (dostęp: 2021-05-22)
+2. <http://arantxa.ii.uam.es/~die/[Lectura%20EDA]%20Annealing%20-%20Rutenbar.pdf> (dostęp: 2021-05-22)
