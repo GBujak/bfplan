@@ -63,6 +63,11 @@ kompilują się do kodu maszynowego i są tak wydajne, jak programy napisane w C
 
 Do prezentacji ułożonego planu wykorzystaliśmy HTML.
 
+Kody źródłowe:
+
+* Algorytm w Rust: <https://github.com/gbujak/bfplan>
+* Aplikacja internetowa: <https://github.com/arekmarko/projekt-zespolowy>
+
 # Podstawa teoretyczna
 
 ## Symulowane wyżarzanie
@@ -259,7 +264,7 @@ poprzez suwak znajdujący się w prawym górnym rogu strony (Rysunek 5).
 W prawym górnym rogu strony znajduje się przycisk zaloguj, który przenosi
 użytkownika na stronę logowania (Rysunek 6).
 
-![Ekran logowania](./loguj.png)
+![Ekran logowania](./loguj.png){width=30%}
 
 Po zalogowaniu się na konto administratora otworzy się panel (Rysunek 7),
 w którym znajdują się zakładki 'Dodaj salę', 'Dodaj grupę'
