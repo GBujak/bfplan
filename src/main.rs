@@ -11,6 +11,8 @@ use input::PlanInput;
 use itertools::peek_nth;
 use itertools::Itertools;
 
+use crate::annealing::illegal_buffer::IllegalBuffer;
+
 fn main() {
     let mut input = String::new();
     std::io::stdin().read_to_string(&mut input).unwrap();

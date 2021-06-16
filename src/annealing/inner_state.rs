@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use super::mutation::{Mutation, MutationType};
+use super::{illegal_buffer::IllegalBuffer, mutation::{Mutation, MutationType}};
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 pub struct ClassroomTimeKey {
@@ -221,7 +221,7 @@ impl InnerState {
         self.put_lesson(right_new_state, right_id);
     }
 
-    fn apply_non_time_mutation(&mut self, mutation: Mutation) -> bool {
+    fn apply_non_time_mutation(&mut self, mutation: Mutation, illegal_buffer: Option<&IllegalBuffer>) -> bool {
         let target_lesson = mutation.target_lesson;
         let lesson = self.lessons[target_lesson];
         let changed_lesson = match mutation.mutation_type {
@@ -260,7 +260,7 @@ impl InnerState {
         true
     }
 
-    fn apply_time_mutation(&mut self, mutation: Mutation) -> bool {
+    fn apply_time_mutation(&mut self, mutation: Mutation, illegal_buffer: Option<&IllegalBuffer>) -> bool {
         let target_lesson = mutation.target_lesson;
         let lesson_old_state = self.lessons[target_lesson];
         let new_time = match mutation.mutation_type {
@@ -305,10 +305,10 @@ impl InnerState {
         true
     }
 
-    pub fn apply_mutation(&mut self, mutation: Mutation) -> bool {
+    pub fn apply_mutation(&mut self, mutation: Mutation, illegal_buffer: Option<&IllegalBuffer>) -> bool {
         match &mutation.mutation_type {
-            &MutationType::ChangeTime(_) => self.apply_time_mutation(mutation),
-            _ => self.apply_non_time_mutation(mutation),
+            &MutationType::ChangeTime(_) => self.apply_time_mutation(mutation, illegal_buffer),
+            _ => self.apply_non_time_mutation(mutation, illegal_buffer),
         }
     }
 }

@@ -23,12 +23,12 @@ header-includes: |
     \centering
     \Large Politechnika Świętokrzyska \\
     Wydział Elektrotechniki, Automatyki i Informatyki\\
-    \vspace{4cm}
+    \vspace{2cm}
 
     Grzegorz Bujak\\
     Arkadiusz Markowski\\
     Marcin Majdański\\
-    \vspace{3cm}
+    \vspace{2cm}
 
     \Huge Układanie planu zajęć na studiach niestacjonarnych\\
     \vspace{3cm}
@@ -36,10 +36,14 @@ header-includes: |
     \large Projekt zespołowy\\
     na studiach stacjonarnych\\
     o kierunku informatyka\\
-    \vspace{3cm}
+    \vspace{5cm}
 
     \raggedleft Opiekun projektu:\\
     Doktor Inżynier Grzegorz Słoń
+    \vspace{1cm}
+
+    \centering
+    Kielce, 2021
 \end{figure}
 
 \vspace{1cm}
@@ -277,16 +281,9 @@ po prawej stronie zakładek (niezaimplementowane).
 
 # Bibliografia
 
-## Symulowane wyżarzanie - teroria
+## Symulowane wyżarzanie - teoria
 
-1. Busetti Franco: Simulated annealing overview
-
-    <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018&rep=rep1&type=pdf> 
-
-    (dostęp: 2021-05-22)
-
-2. Rutenbar A. Rob: Simulated Annealing Algorithms: An Overview
-
-    <http://arantxa.ii.uam.es/~die/[Lectura%20EDA]%20Annealing%20-%20Rutenbar.pdf>
-
-    (dostęp: 2021-05-22)
+1. Busetti, Franco. "Simulated annealing overview." World Wide Web URL 
+   <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.66.5018&rep=rep1&type=pdf> 4 (2003). (dostęp 2021-06-15)
+2. R. A. Rutenbar, "Simulated annealing algorithms: an overview," in IEEE Circuits
+   and Devices Magazine, vol. 5, no. 1, pp. 19-26, Jan. 1989, doi: 10.1109/101.17235.

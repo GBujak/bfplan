@@ -57,18 +57,18 @@ impl AnnealingBuffer {
             .place_lesson(lesson, teacher, classroom, time, group)
     }
 
-    fn apply_mutation(&mut self, mutation: Mutation) -> ReverseMutation {
+    fn apply_mutation(&mut self, mutation: Mutation, illegal_buffer: &IllegalBuffer) -> ReverseMutation {
         let previous_lesson_state = self.inner_state.state_ref().lessons[mutation.target_lesson];
         let rev_mutation = mutation.reverse_mutation(previous_lesson_state);
-        self.inner_state.apply_mutation(mutation);
+        self.inner_state.apply_mutation(mutation, Some(illegal_buffer));
         rev_mutation
     }
 
     fn apply_reverse_mutation(&mut self, reverse_mutation: ReverseMutation) {
-        self.inner_state.apply_mutation(reverse_mutation.get());
+        self.inner_state.apply_mutation(reverse_mutation.get(), None);
     }
 
-    pub fn anneal_iterations(&mut self, iterations: usize, weights: &EnergyWeights) {
+    pub fn anneal_iterations(&mut self, iterations: usize, weights: &EnergyWeights, illegal_buffer: IllegalBuffer) {
         let mut annealing_state = AnnealingState::new(iterations);
         let mut statistics = BufferStatistics::new();
         statistics.emplace_of_buffer(self);
@@ -95,7 +95,7 @@ impl AnnealingBuffer {
 
             for j in 1..=1_000_000 {
                 let mutation = Mutation::legal_of_buffer(self);
-                let rev_mutation = self.apply_mutation(mutation);
+                let rev_mutation = self.apply_mutation(mutation, &illegal_buffer);
                 statistics.emplace_of_buffer(self);
                 let new_energy = statistics.energy(weights);
                 if !annealing_state.should_accept_state(last_energy, new_energy) {

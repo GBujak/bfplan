@@ -1,8 +1,12 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
-use crate::{data_types::{Classroom, SimpleDate, StudentGroup, Subject, Teacher}, input::PlanInput, output::{LessonOwned, PlanOutput}};
+use crate::{
+    data_types::{Classroom, SimpleDate, StudentGroup, Subject, Teacher},
+    input::PlanInput,
+    output::{LessonOwned, PlanOutput},
+};
 
-use super::annealing_buffer::AnnealingBuffer;
+use super::{annealing_buffer::AnnealingBuffer, illegal_buffer::{CanTeach, IllegalBuffer}};
 
 #[derive(Default)]
 pub struct AnnealingAdapter<'a> {
@@ -104,6 +108,18 @@ impl<'a> AnnealingAdapter<'a> {
         buffer
     }
 
+    pub fn create_illegal_buffer(&self) -> IllegalBuffer {
+        let mut can_teach = HashSet::new();
+        let mut can_hold = HashSet::new();
+        let mut illegal_states = Vec::new();
+
+        for (lesson_id, lesson_info) in self.lesson_info.iter().enumerate() {
+            let can_teach = self.subject_info[lesson_info.subject_name].can_teach;
+        }
+
+        IllegalBuffer::new(can_teach, can_hold, illegal_states)
+    }
+
     pub fn buffer_to_output(&self, annealing_buffer: &AnnealingBuffer) -> PlanOutput {
         let mut output = PlanOutput::new();
         let state_ref = annealing_buffer.inner_state.state_ref();
@@ -112,10 +128,14 @@ impl<'a> AnnealingAdapter<'a> {
             output.push_lesson(LessonOwned {
                 subject_name: lesson_info.subject_name.to_owned(),
                 group: lesson_info.student_group.name.clone(),
-                teacher: self.plan_input.unwrap().teachers[lesson.teacher as usize].name.clone(),
+                teacher: self.plan_input.unwrap().teachers[lesson.teacher as usize]
+                    .name
+                    .clone(),
                 time: SimpleDate::from_u8_time(lesson.time),
-                classroom: self.plan_input.unwrap().classrooms[lesson.classroom as usize].name.clone(),
-            })
+                classroom: self.plan_input.unwrap().classrooms[lesson.classroom as usize]
+                    .name
+                    .clone(),
+                })
         }
         output
     }
