@@ -3,9 +3,15 @@ documentclass: article
 papersize: a4
 lang: pl
 
-fontsize: 8pt
+fontsize: 12pt
+linestretch: 1.5
 
-geometry: margin=3cm
+geometry: 
+ - top=3cm
+ - left=3cm
+ - bottom=3cm
+ - right=2.5cm
+
 numbersections: true
 
 monofont: Iosevka Term
@@ -32,7 +38,7 @@ header-includes: |
     \large Projekt zespołowy\\
     na studiach stacjonarnych\\
     o kierunku informatyka\\
-    \vspace{4cm}
+    \vspace{3cm}
 
     \raggedleft Opiekun projektu:\\
     Doktor Inżynier Grzegorz Słoń
