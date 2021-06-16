@@ -275,6 +275,24 @@ Kolejnym problemem przy pisaniu takich algorytmów jest to, że błędy nie są 
 Błędy dało się wykryć dopiero po dodaniu asercji w najważniejszych funkcjach
 programu.
 
+Przygotowany program nie spełnia wszystkich założeń projektu. Program implementujący
+algorytm wyżarzania jest prawie kompletny. Największą brakującą funkcją są stany
+nielegalne, ale do dokończenia tej funkcji brakuje tylko kilku godzin pracy.
+Niezbędna jest też refaktoryzacja mniej ważnych części aplikacji. Najważniejsze
+moduły są napisane starannie, ale te mniej ważne mają nawet funkcje pozostałe po
+wcześniejszej wersji projektu wykorzystującej inny algorytm.
+
+Kolejnym niespełnionym założeniem jest interfejs użytkownika. W skład projektu miała
+wchodzić aplikacja internetowa, która pozwalałaby na wprowadzanie danych i
+generowanie planu przez administratora oraz przeglądanie planu przez studentów. Każdy
+członek zespołu projektowego ma doświadczenie z pisaniem prostych aplikacji
+internetowych.
+
+Podsumowując, najważniejszym powodem niespełnienia założeń był brak czasu. Założenia
+udałoby się spełnić przy lepszej organizacji pracy lub większej ilości czasu.
+Członkowie zespołu muszą bardziej skupić się na organizacji pracy przy pisaniu
+kolejnych projektów.
+
 # Instrukcja obsługi aplikacji
 
 Większość strony zajmuje sam plan, na którym zajęcia są oznakowane różnymi kolorami
