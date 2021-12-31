@@ -1,4 +1,10 @@
-use super::{annealing_state::AnnealingState, energy::{BufferStatistics, EnergyWeights}, illegal_buffer::IllegalBuffer, inner_state::{InnerCollision, InnerState}, mutation::*};
+use super::{
+    annealing_state::AnnealingState,
+    energy::{BufferStatistics, EnergyWeights},
+    illegal_buffer::IllegalBuffer,
+    inner_state::{InnerCollision, InnerState},
+    mutation::*,
+};
 
 use std::collections::{HashMap, HashSet};
 
@@ -57,18 +63,29 @@ impl AnnealingBuffer {
             .place_lesson(lesson, teacher, classroom, time, group)
     }
 
-    fn apply_mutation(&mut self, mutation: Mutation, illegal_buffer: &IllegalBuffer) -> ReverseMutation {
+    fn apply_mutation(
+        &mut self,
+        mutation: Mutation,
+        illegal_buffer: &IllegalBuffer,
+    ) -> ReverseMutation {
         let previous_lesson_state = self.inner_state.state_ref().lessons[mutation.target_lesson];
         let rev_mutation = mutation.reverse_mutation(previous_lesson_state);
-        self.inner_state.apply_mutation(mutation, Some(illegal_buffer));
+        self.inner_state
+            .apply_mutation(mutation, Some(illegal_buffer));
         rev_mutation
     }
 
     fn apply_reverse_mutation(&mut self, reverse_mutation: ReverseMutation) {
-        self.inner_state.apply_mutation(reverse_mutation.get(), None);
+        self.inner_state
+            .apply_mutation(reverse_mutation.get(), None);
     }
 
-    pub fn anneal_iterations(&mut self, iterations: usize, weights: &EnergyWeights, illegal_buffer: IllegalBuffer) {
+    pub fn anneal_iterations(
+        &mut self,
+        iterations: usize,
+        weights: &EnergyWeights,
+        illegal_buffer: IllegalBuffer,
+    ) {
         let mut annealing_state = AnnealingState::new(iterations);
         let mut statistics = BufferStatistics::new();
         statistics.emplace_of_buffer(self);

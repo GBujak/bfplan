@@ -24,7 +24,11 @@ pub struct IllegalBuffer {
 }
 
 impl IllegalBuffer {
-    pub fn new(can_teach: HashSet<CanTeach>, can_hold: HashSet<CanHold>, illegal_states: Vec<IllegalState>) -> Self {
+    pub fn new(
+        can_teach: HashSet<CanTeach>,
+        can_hold: HashSet<CanHold>,
+        illegal_states: Vec<IllegalState>,
+    ) -> Self {
         Self {
             can_teach,
             can_hold,
@@ -49,7 +53,6 @@ impl IllegalBuffer {
     }
 
     pub fn is_illegal(&self, lesson: Lesson) -> bool {
-
         false
     }
 }

@@ -6,7 +6,10 @@ use crate::{
     output::{LessonOwned, PlanOutput},
 };
 
-use super::{annealing_buffer::AnnealingBuffer, illegal_buffer::{CanTeach, IllegalBuffer}};
+use super::{
+    annealing_buffer::AnnealingBuffer,
+    illegal_buffer::{CanTeach, IllegalBuffer},
+};
 
 #[derive(Default)]
 pub struct AnnealingAdapter<'a> {
@@ -114,7 +117,7 @@ impl<'a> AnnealingAdapter<'a> {
         let mut illegal_states = Vec::new();
 
         for (lesson_id, lesson_info) in self.lesson_info.iter().enumerate() {
-            let can_teach = self.subject_info[lesson_info.subject_name].can_teach;
+            let can_teach = &self.subject_info[lesson_info.subject_name].can_teach;
         }
 
         IllegalBuffer::new(can_teach, can_hold, illegal_states)
@@ -135,7 +138,7 @@ impl<'a> AnnealingAdapter<'a> {
                 classroom: self.plan_input.unwrap().classrooms[lesson.classroom as usize]
                     .name
                     .clone(),
-                })
+            })
         }
         output
     }

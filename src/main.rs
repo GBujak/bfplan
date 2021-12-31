@@ -1,4 +1,5 @@
-use std::{fs::File, io::Read};
+use std::collections::HashSet;
+use std::fs::File;
 
 mod annealing;
 mod data_types;
@@ -8,8 +9,6 @@ mod output;
 
 use annealing::{adapter::AnnealingAdapter, energy::EnergyWeights};
 use input::PlanInput;
-use itertools::peek_nth;
-use itertools::Itertools;
 
 use crate::annealing::illegal_buffer::IllegalBuffer;
 
@@ -31,6 +30,7 @@ fn main() {
             group_lessons_in_day_weight: 1.0,
             teacher_lessons_in_day_weight: 1.0,
         },
+        IllegalBuffer::new(HashSet::new(), HashSet::new(), Vec::new()),
     );
 
     buffer.assert_maps_synchronized("After adapter::create_annealing_buffer");
@@ -38,5 +38,8 @@ fn main() {
     let output = annealing_adapter.buffer_to_output(&buffer);
 
     use std::io::prelude::*;
-    File::create("output.json").unwrap().write_all(serde_json::to_string_pretty(&output).unwrap().as_bytes()).unwrap();
+    File::create("output.json")
+        .unwrap()
+        .write_all(serde_json::to_string_pretty(&output).unwrap().as_bytes())
+        .unwrap();
 }

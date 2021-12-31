@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 
-use super::{illegal_buffer::IllegalBuffer, mutation::{Mutation, MutationType}};
+use super::{
+    illegal_buffer::IllegalBuffer,
+    mutation::{Mutation, MutationType},
+};
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 pub struct ClassroomTimeKey {
@@ -160,7 +163,8 @@ impl InnerState {
         assert!(
             self.lessons.len() > lesson_id,
             "Lesson buffer is shorter {} than lesson id {}",
-            self.lessons.len(), lesson_id
+            self.lessons.len(),
+            lesson_id
         );
 
         let lesson = Lesson {
@@ -221,7 +225,11 @@ impl InnerState {
         self.put_lesson(right_new_state, right_id);
     }
 
-    fn apply_non_time_mutation(&mut self, mutation: Mutation, illegal_buffer: Option<&IllegalBuffer>) -> bool {
+    fn apply_non_time_mutation(
+        &mut self,
+        mutation: Mutation,
+        illegal_buffer: Option<&IllegalBuffer>,
+    ) -> bool {
         let target_lesson = mutation.target_lesson;
         let lesson = self.lessons[target_lesson];
         let changed_lesson = match mutation.mutation_type {
@@ -260,7 +268,11 @@ impl InnerState {
         true
     }
 
-    fn apply_time_mutation(&mut self, mutation: Mutation, illegal_buffer: Option<&IllegalBuffer>) -> bool {
+    fn apply_time_mutation(
+        &mut self,
+        mutation: Mutation,
+        illegal_buffer: Option<&IllegalBuffer>,
+    ) -> bool {
         let target_lesson = mutation.target_lesson;
         let lesson_old_state = self.lessons[target_lesson];
         let new_time = match mutation.mutation_type {
@@ -305,7 +317,11 @@ impl InnerState {
         true
     }
 
-    pub fn apply_mutation(&mut self, mutation: Mutation, illegal_buffer: Option<&IllegalBuffer>) -> bool {
+    pub fn apply_mutation(
+        &mut self,
+        mutation: Mutation,
+        illegal_buffer: Option<&IllegalBuffer>,
+    ) -> bool {
         match &mutation.mutation_type {
             &MutationType::ChangeTime(_) => self.apply_time_mutation(mutation, illegal_buffer),
             _ => self.apply_non_time_mutation(mutation, illegal_buffer),
@@ -355,14 +371,37 @@ mod test {
         let mutation = Mutation::new(0, MutationType::ChangeTime(1));
         let rev_mutation = mutation.reverse_mutation(inner_state.lessons[0]);
 
-        assert_eq!(inner_state.apply_mutation(mutation), true);
+        assert_eq!(inner_state.apply_mutation(mutation, None), true);
 
         assert_eq!(inner_state.state_ref().lessons[0].time, 1);
         assert_eq!(inner_state.state_ref().lessons[1].time, 0);
 
-        assert_eq!(inner_state.apply_mutation(rev_mutation.get()), true);
+        assert_eq!(inner_state.apply_mutation(rev_mutation.get(), None), true);
 
         assert_eq!(inner_state.state_ref().lessons[0].time, 0);
         assert_eq!(inner_state.state_ref().lessons[1].time, 1);
+    }
+
+    #[test]
+    #[should_panic]
+    fn assert_synchronized_works() {
+        let mut inner_state = InnerState::new(10);
+        inner_state.put_lesson(
+            Lesson {
+                classroom: 0,
+                teacher: 0,
+                time: 0,
+                group: 0,
+            },
+            0,
+        );
+        inner_state.classroom_time.insert(
+            ClassroomTimeKey {
+                classroom: 0,
+                time: 0,
+            },
+            1,
+        );
+        inner_state.assert_maps_synchronized("Should panic");
     }
 }
