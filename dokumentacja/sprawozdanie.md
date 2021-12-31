@@ -131,7 +131,7 @@ Napisany program implementuje algorytm symulowanego wyżarzania opisany w poprze
 sekcji. W tej sekcji opisany jest sposób, w jaki program implementuje ten algorytm.
 
 Większość czasu działania programu odbywa się w nieskończonej pętli, której działanie
-jest opisane w krokach w poprzedniej sekcji. Nasza implementacja algorytmu przerywa
+jest opisane w krokach w poprzedniej sekcji. Implementacja algorytmu przerywa
 pracę, gdy odrzucone zostanie 1.000.000 zmian stanu z rzędu.
 
 ## Przechowywanie stanu programu
@@ -151,7 +151,7 @@ struct PlanLekcji {
 }
 \end{lstlisting}
 
-Stan planu przechowywany jest w naszym programie za pomocą czterech struktur danych.
+Stan planu przechowywany jest w programie za pomocą czterech struktur danych.
 Są to: tablica i trzy tablice mieszające. Taka kombinacja znacznie zwiększa
 skomplikowanie programu, ale przyspiesza wykonywanie mutacji. Zwykła tablica
 przechowuje struktury zawierające dane o pojedynczej lekcji. Są to grupa studencka,
@@ -178,7 +178,7 @@ zaimplementowane "mutacje". Mutacja to struktura przechowująca rodzaj zmiany st
 pozwalająca na wygenerowanie mutacji odwrotnej, której wykonanie przywróci stan przed
 oryginalną mutacją.
 
-Losowanie stanu sąsiedniego w naszym programie polega na losowaniu mutacji. Mutacja
+Losowanie stanu sąsiedniego w programie polega na losowaniu mutacji. Mutacja
 jest następnie wykonywana na stanie programu. Oceniana jest energia stanu po mutacji
 i podejmowna jest decyzja o przyjęciu nowego stanu. Przy odrzuceniu nowego stanu,
 wykonywana jest mutacja odwrotna.
@@ -274,6 +274,24 @@ skomplikowana i została zastąpiona prostszym rozwiązaniem.
 Kolejnym problemem przy pisaniu takich algorytmów jest to, że błędy nie są widoczne.
 Błędy dało się wykryć dopiero po dodaniu asercji w najważniejszych funkcjach
 programu.
+
+Przygotowany program nie spełnia wszystkich założeń projektu. Program implementujący
+algorytm wyżarzania jest prawie kompletny. Największą brakującą funkcją są stany
+nielegalne, ale do dokończenia tej funkcji brakuje tylko kilku godzin pracy.
+Niezbędna jest też refaktoryzacja mniej ważnych części aplikacji. Najważniejsze
+moduły są napisane starannie, ale te mniej ważne mają nawet funkcje pozostałe po
+wcześniejszej wersji projektu wykorzystującej inny algorytm.
+
+Kolejnym niespełnionym założeniem jest interfejs użytkownika. W skład projektu miała
+wchodzić aplikacja internetowa, która pozwalałaby na wprowadzanie danych i
+generowanie planu przez administratora oraz przeglądanie planu przez studentów. Każdy
+członek zespołu projektowego ma doświadczenie z pisaniem prostych aplikacji
+internetowych.
+
+Podsumowując, najważniejszym powodem niespełnienia założeń był brak czasu. Założenia
+udałoby się spełnić przy lepszej organizacji pracy lub większej ilości czasu.
+Członkowie zespołu muszą bardziej skupić się na organizacji pracy przy pisaniu
+kolejnych projektów.
 
 # Instrukcja obsługi aplikacji
 
